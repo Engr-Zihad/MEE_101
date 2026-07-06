@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ME 161 — হ্যান্ড নোট | Hand Note</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;600&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --surface2:  #1c2330;
+    --border:    #30363d;
+    --accent:    #f0a500;
+    --accent2:   #58a6ff;
+    --accent3:   #3fb950;
+    --accent4:   #ff7b72;
+    --text:      #e6edf3;
+    --muted:     #8b949e;
+    --heading:   #ffffff;
+    --formula-bg:#0d2137;
+    --formula-border:#1f6feb;
+    --tag-bg:    rgba(240,165,0,0.12);
+    --tag-border:rgba(240,165,0,0.4);
+    --bn-color:  #c8d1e0;
+    --en-color:  #e6edf3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', 'Noto Sans Bengali', serif;
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0a1628 0%, #0d2137 50%, #091020 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+  }
+
+  header .tag-line {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  header h1 {
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: var(--heading);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  header h1 span { color: var(--accent); }
+
+  header .sub {
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+  }
+
+  .lang-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .lang-btn {
+    padding: 0.35rem 1.1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .lang-btn.active, .lang-btn:hover {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ── LAYOUT ── */
+  .wrapper {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 2rem 1rem 2rem 1.5rem;
+    position: sticky;
+    top: 130px;
+    height: calc(100vh - 130px);
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+  }
+
+  .toc::-webkit-scrollbar { width: 4px; }
+  .toc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .toc h2 {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-family: 'Source Code Pro', monospace;
+    margin-bottom: 1rem;
+  }
+
+  .toc a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: 4px;
+    margin-bottom: 0.1rem;
+    transition: all 0.2s;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    line-height: 1.4;
+  }
+
+  .toc a:hover, .toc a.active {
+    color: var(--accent);
+    background: var(--tag-bg);
+  }
+
+  .toc .toc-section { margin-top: 0.8rem; }
+
+  .toc .toc-section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    font-family: 'Source Code Pro', monospace;
+    margin-bottom: 0.3rem;
+    padding-left: 0.4rem;
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    flex: 1;
+    padding: 2.5rem 2.5rem 4rem;
+    min-width: 0;
+  }
+
+  /* ── CHAPTER ── */
+  .chapter {
+    margin-bottom: 4rem;
+    scroll-margin-top: 150px;
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chapter-num {
+    background: var(--accent);
+    color: #000;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 0.25rem;
+  }
+
+  .chapter-title { flex: 1; }
+
+  .chapter-title h2 {
+    font-size: clamp(1.2rem, 3vw, 1.7rem);
+    color: var(--heading);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .chapter-title .bn-title {
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 1rem;
+    color: var(--accent);
+    display: block;
+    margin-top: 0.2rem;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 2.5rem;
+    scroll-margin-top: 150px;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+    color: var(--accent2);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 1.1em;
+    background: var(--accent2);
+    border-radius: 2px;
+  }
+
+  .section-title .bn {
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  /* ── BILINGUAL BLOCK ── */
+  .bilingual {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+  }
+
+  .lang-en, .lang-bn {
+    padding: 1rem 1.2rem;
+  }
+
+  .lang-en {
+    border-bottom: 1px solid var(--border);
+    color: var(--en-color);
+    font-size: 0.92rem;
+  }
+
+  .lang-en::before {
+    content: 'EN';
+    display: inline-block;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+    padding: 0.05rem 0.35rem;
+    border-radius: 3px;
+    margin-right: 0.6rem;
+    vertical-align: middle;
+    letter-spacing: 0.08em;
+  }
+
+  .lang-bn {
+    color: var(--bn-color);
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.9;
+  }
+
+  .lang-bn::before {
+    content: 'বাং';
+    display: inline-block;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.65rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.05rem 0.35rem;
+    border-radius: 3px;
+    margin-right: 0.6rem;
+    vertical-align: middle;
+  }
+
+  body.show-en .lang-bn { display: none; }
+  body.show-bn .lang-en { display: none; }
+  body.show-en .lang-en { border-bottom: none; }
+
+  /* ── DEFINITION BOX ── */
+  .def-box {
+    background: rgba(88,166,255,0.07);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+  }
+
+  .def-box .def-label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent2);
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── FORMULA BOX ── */
+  .formula {
+    background: var(--formula-bg);
+    border: 1px solid var(--formula-border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin: 1.2rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1rem;
+    color: #79c0ff;
+    text-align: center;
+    overflow-x: auto;
+  }
+
+  .formula .formula-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    font-family: 'Source Code Pro', monospace;
+    display: block;
+    text-align: left;
+  }
+
+  .formula .formula-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.6rem;
+    text-align: left;
+    font-family: 'Lora', serif;
+    font-style: italic;
+  }
+
+  /* ── KEY POINT ── */
+  .key-point {
+    background: rgba(240,165,0,0.06);
+    border: 1px solid var(--tag-border);
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+  }
+
+  .key-point::before {
+    content: '★ Key Point';
+    display: block;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  /* ── WARNING / NOTE ── */
+  .note-box {
+    background: rgba(63,185,80,0.07);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 8px 8px 0;
+    padding: 0.9rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+  }
+
+  .warn-box {
+    background: rgba(255,123,114,0.07);
+    border-left: 3px solid var(--accent4);
+    border-radius: 0 8px 8px 0;
+    padding: 0.9rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+  }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    border: 1px solid var(--border);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* ── GRID CARDS ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--accent); }
+
+  .card-icon {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 0.3rem;
+  }
+
+  .card-bn {
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-body {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── PROCESS STEPS ── */
+  .steps {
+    counter-reset: step;
+    margin: 1.2rem 0;
+  }
+
+  .step {
+    counter-increment: step;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+    align-items: flex-start;
+  }
+
+  .step::before {
+    content: counter(step);
+    background: var(--accent);
+    color: #000;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .step-content { flex: 1; }
+
+  .step-content .en { font-size: 0.88rem; color: var(--text); }
+  .step-content .bn { font-family: 'Noto Sans Bengali', sans-serif; font-size: 0.84rem; color: var(--muted); margin-top: 0.2rem; }
+
+  body.show-en .step-content .bn { display: none; }
+  body.show-bn .step-content .en { display: none; }
+
+  /* ── COMPARE TABLE ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+
+  .compare-col {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .compare-col-header {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: 'Source Code Pro', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .compare-col:first-child .compare-col-header {
+    background: rgba(88,166,255,0.15);
+    color: var(--accent2);
+  }
+
+  .compare-col:last-child .compare-col-header {
+    background: rgba(240,165,0,0.1);
+    color: var(--accent);
+  }
+
+  .compare-col ul {
+    list-style: none;
+    padding: 0.7rem 1rem;
+  }
+
+  .compare-col li {
+    font-size: 0.82rem;
+    color: var(--text);
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .compare-col li:last-child { border-bottom: none; }
+
+  .compare-col li .bn {
+    display: block;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  body.show-en .compare-col li .bn { display: none; }
+  body.show-bn .compare-col li .en { display: none; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-right: 0.3rem;
+  }
+
+  .badge-blue  { background: rgba(88,166,255,0.15); color: var(--accent2); border: 1px solid rgba(88,166,255,0.3); }
+  .badge-gold  { background: var(--tag-bg); color: var(--accent); border: 1px solid var(--tag-border); }
+  .badge-green { background: rgba(63,185,80,0.1); color: var(--accent3); border: 1px solid rgba(63,185,80,0.3); }
+  .badge-red   { background: rgba(255,123,114,0.1); color: var(--accent4); border: 1px solid rgba(255,123,114,0.3); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    font-family: 'Noto Sans Bengali', sans-serif;
+  }
+
+  /* ── SCROLL BAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  @media (max-width: 768px) {
+    .toc { display: none; }
+    .content { padding: 1.5rem 1rem 3rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── HIGHLIGHT ── */
+  strong { color: #ffd27f; }
+  em { color: var(--accent2); font-style: italic; }
+
+  /* anchor offset */
+  [id] { scroll-margin-top: 160px; }
+</style>
+</head>
+<body class="show-both">
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <div class="tag-line">ME 161 · Introduction to Mechanical Engineering · BUET</div>
+  <h1>হ্যান্ড নোট &amp; <span>Hand Note</span></h1>
+  <div class="sub">ড. মো. আশিকুর রহমান — সহকারী অধ্যাপক, ME, BUET</div>
+  <div class="lang-toggle">
+    <button class="lang-btn" onclick="setLang('show-both')">বাং + EN</button>
+    <button class="lang-btn" onclick="setLang('show-bn')">বাংলা</button>
+    <button class="lang-btn" onclick="setLang('show-en')">English</button>
+  </div>
+</header>
+
+<div class="wrapper">
+
+<!-- ══════════════ TOC ══════════════ -->
+<nav class="toc">
+  <h2>বিষয়সূচি / Contents</h2>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Steam Generator</div>
+    <a href="#ch1">১. স্টিম জেনারেটর কী?</a>
+    <a href="#steam-application">১.১ প্রয়োগ</a>
+    <a href="#steam-fundamentals">১.২ মূলনীতি</a>
+    <a href="#boiling">১.৩ বাষ্পীভবন প্রক্রিয়া</a>
+    <a href="#pressure-effect">১.৪ চাপের প্রভাব</a>
+    <a href="#good-boiler">১.৫ ভালো বয়লারের গুণাবলি</a>
+    <a href="#classification">১.৬ শ্রেণিবিভাগ</a>
+    <a href="#fire-tube">১.৭ ফায়ার টিউব বয়লার</a>
+    <a href="#water-tube">১.৮ ওয়াটার টিউব বয়লার</a>
+    <a href="#merits-demerits">১.৯ তুলনা</a>
+    <a href="#mountings">১.১০ মাউন্টিং</a>
+    <a href="#accessories">১.১১ এক্সেসরিজ</a>
+    <a href="#steam-props">১.১২ বাষ্পের গুণাগুণ</a>
+    <a href="#efficiency">১.১৩ দক্ষতা</a>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Thermodynamics</div>
+    <a href="#ch2">২. তাপগতিবিদ্যা</a>
+    <a href="#system">২.১ সিস্টেম ও সীমানা</a>
+    <a href="#property-state">২.২ ধর্ম, অবস্থা, প্রক্রিয়া</a>
+    <a href="#intensive-extensive">২.৩ তীব্র ও বিস্তৃত ধর্ম</a>
+    <a href="#internal-enthalpy">২.৪ অভ্যন্তরীণ শক্তি ও এনথালপি</a>
+    <a href="#pressure-types">২.৫ চাপের প্রকারভেদ</a>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Thermo Laws</div>
+    <a href="#ch3">৩. তাপগতিবিদ্যার সূত্র</a>
+    <a href="#phase-diagram">৩.১ দশা-চিত্র</a>
+    <a href="#zeroth">৩.২ শূন্যতম সূত্র</a>
+    <a href="#first-law">৩.৩ প্রথম সূত্র</a>
+    <a href="#heat-engine">৩.৪ তাপ ইঞ্জিন</a>
+    <a href="#second-law">৩.৫ দ্বিতীয় সূত্র</a>
+    <a href="#entropy">৩.৬ এন্ট্রপি</a>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Cycles</div>
+    <a href="#ch4">৪. তাপগতিচক্র</a>
+    <a href="#power-cycles">৪.১ পাওয়ার সাইকেল</a>
+    <a href="#carnot">৪.২ কার্নো সাইকেল</a>
+    <a href="#rankine">৪.৩ র‌্যাংকিন সাইকেল</a>
+    <a href="#deviations">৪.৪ বিচ্যুতি</a>
+  </div>
+</nav>
+
+<!-- ══════════════ MAIN CONTENT ══════════════ -->
+<main class="content">
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- CHAPTER 1: STEAM GENERATOR                  -->
+<!-- ═══════════════════════════════════════════ -->
+<article class="chapter" id="ch1">
+  <div class="chapter-header">
+    <div class="chapter-num">LEC 2–3</div>
+    <div class="chapter-title">
+      <h2>Steam Generator (Boiler)</h2>
+      <span class="bn-title">স্টিম জেনারেটর / বয়লার</span>
+    </div>
+  </div>
+
+  <!-- 1.0 Definition -->
+  <div class="section" id="steam-definition">
+    <div class="section-title">সংজ্ঞা <span class="bn">/ Definition</span></div>
+
+    <div class="def-box">
+      <div class="def-label">Definition / সংজ্ঞা</div>
+      <div class="bilingual">
+        <div class="lang-en">A <strong>boiler</strong> is an <em>enclosed container</em> that provides a means for heat of combustion to be transferred into the working media (water) until it becomes <strong>steam</strong>. Open vessels generating steam at atmospheric pressure are <em>NOT</em> considered boilers.</div>
+        <div class="lang-bn">একটি <strong>বয়লার</strong> হলো একটি <em>আবদ্ধ পাত্র</em> যা জ্বালানি দহন থেকে উৎপন্ন তাপকে কার্যকর মাধ্যম (পানি) তে স্থানান্তরিত করে এবং পানিকে <strong>বাষ্পে</strong> পরিণত করে। বায়ুমণ্ডলীয় চাপে বাষ্প উৎপন্নকারী খোলা পাত্রকে বয়লার বলা হয় না।</div>
+      </div>
+    </div>
+
+    <div class="key-point">
+      <div class="bilingual">
+        <div class="lang-en">The furnace generates heat by burning fuel; the boiler's job is to transfer that heat to water as efficiently as possible.</div>
+        <div class="lang-bn">চুল্লি জ্বালানি পুড়িয়ে তাপ তৈরি করে; বয়লারের কাজ হলো সেই তাপকে যতটা সম্ভব দক্ষতার সাথে পানিতে স্থানান্তরিত করা।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.1 Applications -->
+  <div class="section" id="steam-application">
+    <div class="section-title">বাষ্পের প্রয়োগ <span class="bn">/ Applications of Steam</span></div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Electric Power Generation</div>
+        <div class="card-bn">বিদ্যুৎ উৎপাদন</div>
+        <div class="card-body">Steam turbines drive generators in power plants.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔥</div>
+        <div class="card-title">Heating</div>
+        <div class="card-bn">গরম করা (স্থান উত্তাপ, গরম পানি)</div>
+        <div class="card-body">Space heating and hot water supply for buildings.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏭</div>
+        <div class="card-title">Industrial Processes</div>
+        <div class="card-bn">শিল্প প্রক্রিয়া (চিনি কল, রাসায়নিক, কাগজ)</div>
+        <div class="card-body">Sugar mills, chemical industry, paper industry.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚓</div>
+        <div class="card-title">Marine Application</div>
+        <div class="card-bn">সামুদ্রিক প্রয়োগ</div>
+        <div class="card-body">Steam propulsion for ships and vessels.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.2 Fundamentals -->
+  <div class="section" id="steam-fundamentals">
+    <div class="section-title">বাষ্প উৎপাদনের মূলনীতি <span class="bn">/ Steam Generation Fundamentals</span></div>
+    <div class="bilingual">
+      <div class="lang-en">
+        <ul style="padding-left:1.2rem; line-height:2">
+          <li>Combustion of fuel produces heat → water evaporates</li>
+          <li>Steam escapes through a pipe (steam outlet)</li>
+          <li><strong>Feedwater</strong> pipe replenishes evaporated water</li>
+          <li>Steam leaves faster than water added → <em>pressure falls</em></li>
+          <li>Water added faster than evaporated → <em>pressure rises</em></li>
+          <li>Water volume increases ~<strong>1,600 times</strong> on boiling → explosive force</li>
+          <li>Boiling point at atmospheric pressure (101.3 kPa) = <strong>100°C</strong></li>
+        </ul>
+      </div>
+      <div class="lang-bn" style="font-family:'Noto Sans Bengali',sans-serif; line-height:2.2">
+        <ul style="padding-left:1.2rem">
+          <li>জ্বালানি দহনে তাপ → পানি বাষ্পীভূত হয়</li>
+          <li>বাষ্প একটি পাইপের মাধ্যমে বেরিয়ে যায়</li>
+          <li><strong>ফিডওয়াটার</strong> পাইপ বাষ্পীভূত পানির ঘাটতি পূরণ করে</li>
+          <li>বাষ্প দ্রুত বের হলে → <em>চাপ কমে</em></li>
+          <li>পানি দ্রুত যোগ হলে → <em>চাপ বাড়ে</em></li>
+          <li>পানির আয়তন ফুটলে ~<strong>১,৬০০ গুণ</strong> বৃদ্ধি পায়</li>
+          <li>বায়ুমণ্ডলীয় চাপে (১০১.৩ kPa) স্ফুটনাঙ্ক = <strong>১০০°C</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.3 Boiling Process -->
+  <div class="section" id="boiling">
+    <div class="section-title">বাষ্পীভবন প্রক্রিয়া <span class="bn">/ Boiling Process</span></div>
+    <div class="bilingual">
+      <div class="lang-en">When the boiling temperature is reached, temperature of water does <em>NOT</em> increase further. Instead, heat energy causes a <strong>phase change</strong> from liquid to gas (water → steam). Steam contains a large amount of <strong>latent heat</strong>. <em>Enthalpy</em> is the widely used expression for energy changes in a system.</div>
+      <div class="lang-bn">স্ফুটনাঙ্কে পৌঁছানোর পর পানির তাপমাত্রা আর বাড়ে না। পরিবর্তে তাপশক্তি তরল থেকে গ্যাসে <strong>দশা পরিবর্তন</strong> ঘটায় (পানি → বাষ্প)। বাষ্পে প্রচুর পরিমাণ <strong>সুপ্ততাপ</strong> থাকে। <em>এনথালপি</em> হলো সিস্টেমে শক্তির পরিবর্তনের একটি ব্যাপকভাবে ব্যবহৃত রাশি।</div>
+    </div>
+  </div>
+
+  <!-- 1.4 Pressure Effect -->
+  <div class="section" id="pressure-effect">
+    <div class="section-title">চাপের প্রভাব <span class="bn">/ Effect of Pressure</span></div>
+    <div class="bilingual">
+      <div class="lang-en">At higher pressure, water evaporates at <strong>higher temperature</strong>. Example: at 10 bar (10 atm), water evaporates at <strong>184°C</strong>. More fuel burnt → more steam → <em>pressure rises</em>. Less fuel → less steam → <em>pressure falls</em>. Critical point for water: <strong>374°C and 22.06 MPa</strong> (no phase boundary exists above this).</div>
+      <div class="lang-bn">উচ্চতর চাপে পানি <strong>উচ্চতর তাপমাত্রায়</strong> বাষ্পীভূত হয়। উদাহরণ: ১০ বার চাপে পানি <strong>১৮৪°C</strong> তে বাষ্পীভূত হয়। বেশি জ্বালানি → বেশি বাষ্প → <em>চাপ বাড়ে</em>। কম জ্বালানি → কম বাষ্প → <em>চাপ কমে</em>। পানির ক্রান্তিক বিন্দু: <strong>৩৭৪°C এবং ২২.০৬ MPa</strong>।</div>
+    </div>
+  </div>
+
+  <!-- 1.5 Good Boiler -->
+  <div class="section" id="good-boiler">
+    <div class="section-title">ভালো বয়লারের বৈশিষ্ট্য <span class="bn">/ Properties of a Good Boiler</span></div>
+    <div class="steps">
+      <div class="step"><div class="step-content"><div class="en">Generate required pressure &amp; quality steam quickly with minimum fuel consumption.</div><div class="bn">ন্যূনতম জ্বালানি খরচে দ্রুত প্রয়োজনীয় চাপ ও মানের বাষ্প উৎপাদন করতে সক্ষম।</div></div></div>
+      <div class="step"><div class="step-content"><div class="en">Initial, installation and maintenance cost should be low.</div><div class="bn">প্রাথমিক, স্থাপনা ও রক্ষণাবেক্ষণ খরচ কম হওয়া উচিত।</div></div></div>
+      <div class="step"><div class="step-content"><div class="en">Light in weight, minimal brickwork, small floor area.</div><div class="bn">হালকা ওজন, কম ইটের গাঁথুনি, ছোট মেঝে এলাকা।</div></div></div>
+      <div class="step"><div class="step-content"><div class="en">Meet fluctuating steam demand without overheating.</div><div class="bn">অতিরিক্ত গরম হওয়া ছাড়াই বাষ্পের পরিবর্তনশীল চাহিদা পূরণ।</div></div></div>
+      <div class="step"><div class="step-content"><div class="en">All parts easily accessible for repair &amp; maintenance.</div><div class="bn">সমস্ত অংশ মেরামত ও রক্ষণাবেক্ষণের জন্য সহজলভ্য।</div></div></div>
+      <div class="step"><div class="step-content"><div class="en">Easy to dismantle, transport and erect on site.</div><div class="bn">সহজে খোলা, পরিবহন ও সাইটে স্থাপন করা যাবে।</div></div></div>
+      <div class="step"><div class="step-content"><div class="en">No mud/sediment deposition on heated surfaces.</div><div class="bn">উত্তপ্ত পৃষ্ঠে কাদা বা অন্য কণার জমাট বাঁধা নেই।</div></div></div>
+      <div class="step"><div class="step-content"><div class="en">Must conform to safety regulations of the "Boilers Act".</div><div class="bn">"বয়লার আইনে" নির্ধারিত নিরাপত্তা বিধিমালা মেনে চলতে হবে।</div></div></div>
+    </div>
+  </div>
+
+  <!-- 1.6 Classification -->
+  <div class="section" id="classification">
+    <div class="section-title">বয়লারের শ্রেণিবিভাগ <span class="bn">/ Classification of Boiler</span></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>ভিত্তি / Basis</th><th>প্রকার / Types</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>গরম গ্যাস ও পানির আপেক্ষিক অবস্থান</strong><br><em>Relative position of hot gas &amp; water</em></td><td>Fire Tube &nbsp;|&nbsp; Water Tube</td></tr>
+          <tr><td><strong>জ্বালানো পদ্ধতি</strong><br><em>Method of firing</em></td><td>Internally Fired &nbsp;|&nbsp; Externally Fired</td></tr>
+          <tr><td><strong>বাষ্পের চাপ</strong><br><em>Steam Pressure</em></td><td>High Pressure (&gt;80 kg/cm²) &nbsp;|&nbsp; Low Pressure (&lt;80 kg/cm²)</td></tr>
+          <tr><td><strong>শ্যাফটের অক্ষ</strong><br><em>Axis of shaft</em></td><td>Vertical &nbsp;|&nbsp; Horizontal</td></tr>
+          <tr><td><strong>পানি সঞ্চালন পদ্ধতি</strong><br><em>Water circulation</em></td><td>Natural &nbsp;|&nbsp; Forced</td></tr>
+          <tr><td><strong>সেবার প্রকৃতি</strong><br><em>Nature of service</em></td><td>Land Boilers &nbsp;|&nbsp; Portable Boilers</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 1.7 Fire Tube -->
+  <div class="section" id="fire-tube">
+    <div class="section-title">ফায়ার টিউব বয়লার <span class="bn">/ Fire Tube Boiler</span></div>
+    <div class="bilingual">
+      <div class="lang-en"><strong>Principle:</strong> Hot gases pass through tubes <em>surrounded by water</em> ("Fire in the tube"). Examples: Lancashire, Cochran, Cornish, Locomotive, Scotch-marine boiler.</div>
+      <div class="lang-bn"><strong>নীতি:</strong> গরম গ্যাস টিউবের ভেতর দিয়ে যায়, আর <em>পানি টিউবগুলিকে ঘিরে থাকে</em> ("টিউবে আগুন")। উদাহরণ: ল্যাঙ্কাশায়ার, কক্রান, কর্নিশ, লোকোমোটিভ, স্কচ-মেরিন বয়লার।</div>
+    </div>
+
+    <div class="def-box">
+      <div class="def-label">Cochran Boiler</div>
+      <div class="bilingual">
+        <div class="lang-en">
+          <span class="badge badge-blue">Vertical</span>
+          <span class="badge badge-gold">Multi-tubular</span>
+          <span class="badge badge-green">Internally Fired</span>
+          <span class="badge badge-blue">Natural Circulation</span><br><br>
+          Consists of an external cylindrical shell (CS). Fuel burnt in grate → hot gases enter combustion chamber (CC) → pass through fire tubes (FT) → heat surrounding water → steam rises to steam space → waste gases exit via chimney (C). Key parts: Furnace (F), Fire tube (FT), Smoke box (SB), Safety valve (SV), Pressure gauge (PG), Water Level Gauge (WLG).
+        </div>
+        <div class="lang-bn">
+          এটি একটি উল্লম্ব, বহু-নলযুক্ত, অভ্যন্তরীণভাবে উত্তপ্ত, প্রাকৃতিক পরিবাহন বয়লার। জ্বালানি গ্রেটে পোড়ানো হয় → গরম গ্যাস দহন চেম্বারে (CC) প্রবেশ করে → ফায়ার টিউব (FT) দিয়ে যায় → আশেপাশের পানি গরম হয় → বাষ্প উপরে ওঠে → ধোঁয়া চিমনি দিয়ে বের হয়। প্রধান অংশ: চুল্লি (F), ফায়ার টিউব (FT), স্মোক বক্স (SB), সেফটি ভাল্ব (SV)।
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.8 Water Tube -->
+  <div class="section" id="water-tube">
+    <div class="section-title">ওয়াটার টিউব বয়লার <span class="bn">/ Water Tube Boiler</span></div>
+    <div class="bilingual">
+      <div class="lang-en"><strong>Principle:</strong> Tubes contain water; hot gases flow <em>outside</em> ("Water in the tube"). Examples: <strong>Babcock &amp; Wilcox</strong>, Stirling boiler.</div>
+      <div class="lang-bn"><strong>নীতি:</strong> টিউবে পানি থাকে; গরম গ্যাস <em>টিউবের বাইরে</em> প্রবাহিত হয় ("টিউবে পানি")। উদাহরণ: <strong>ব্যাবকক ও উইলকক্স</strong>, স্টার্লিং বয়লার।</div>
+    </div>
+
+    <div class="def-box">
+      <div class="def-label">Babcock &amp; Wilcox Boiler / ব্যাবকক ও উইলকক্স বয়লার</div>
+      <div class="bilingual">
+        <div class="lang-en">
+          <span class="badge badge-blue">Horizontal</span>
+          <span class="badge badge-gold">Externally Fired</span>
+          <span class="badge badge-green">Natural Circulation</span><br><br>
+          A welded steel high-pressure <strong>drum</strong> at the top connects to <strong>uptake header</strong> and <strong>down take header</strong> via water tubes inclined ~10°–15° to horizontal. Baffles deflect flue gases. Foreign matter collects in <strong>mud drum</strong>. Natural circulation by convective currents. Heating surface = outer tube surface + ½ of cylindrical drum surface.
+        </div>
+        <div class="lang-bn">
+          উপরে ঝালাই করা উচ্চচাপের <strong>ড্রাম</strong>; আপটেক হেডার ও ডাউনটেক হেডারের সাথে অনুভূমিক থেকে ~১০°–১৫° কোণে হেলানো ওয়াটার টিউব দ্বারা সংযুক্ত। ব্যাফেল প্লেট ধোঁয়া গ্যাস ঘুরিয়ে দেয়। বিদেশী কণা <strong>মাড ড্রামে</strong> সংগৃহীত হয়। পরিচলন স্রোতের মাধ্যমে প্রাকৃতিক পানি সঞ্চালন।
+        </div>
+      </div>
+    </div>
+
+    <div class="bilingual">
+      <div class="lang-en"><strong>Key features of WTB:</strong> Smaller diameter drums resist high pressure. Quicker steam generation (water subdivided into small volumes). Higher operational/maintenance cost than equivalent FTB.</div>
+      <div class="lang-bn"><strong>WTB এর মূল বৈশিষ্ট্য:</strong> ছোট ব্যাসের ড্রাম উচ্চ চাপ সহ্য করতে পারে। দ্রুত বাষ্প উৎপাদন (পানি ছোট আয়তনে ভাগ হয়)। সমতুল্য FTB এর চেয়ে বেশি পরিচালন/রক্ষণাবেক্ষণ খরচ।</div>
+    </div>
+  </div>
+
+  <!-- 1.9 Merits/Demerits -->
+  <div class="section" id="merits-demerits">
+    <div class="section-title">WTB বনাম FTB তুলনা <span class="bn">/ WTB vs FTB Comparison</span></div>
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-col-header">✅ WTB এর সুবিধা (Merits of WTB)</div>
+        <ul>
+          <li><span class="en">Generates steam at higher pressure</span><span class="bn">উচ্চতর চাপে বাষ্প উৎপাদন করে</span></li>
+          <li><span class="en">Higher overall efficiency</span><span class="bn">সামগ্রিক দক্ষতা বেশি</span></li>
+          <li><span class="en">Occupies less space for given power</span><span class="bn">একই শক্তির জন্য কম জায়গা নেয়</span></li>
+          <li><span class="en">Higher steam flow rate</span><span class="bn">বাষ্প প্রবাহের হার বেশি</span></li>
+          <li><span class="en">Parts easily dismantled and transported</span><span class="bn">অংশগুলো সহজে খোলা ও পরিবহন যোগ্য</span></li>
+          <li><span class="en">All parts accessible for cleaning/repair</span><span class="bn">পরিষ্কার ও মেরামতের জন্য সব অংশ সহজলভ্য</span></li>
+          <li><span class="en">"Safety boiler" — one tube burst doesn't stop operation</span><span class="bn">একটি টিউব ফেটলে পুরো কাজ বন্ধ হয় না</span></li>
+          <li><span class="en">Suitable for steam power plants</span><span class="bn">স্টিম পাওয়ার প্ল্যান্টের জন্য উপযুক্ত</span></li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <div class="compare-col-header">❌ WTB এর অসুবিধা (Demerits of WTB)</div>
+        <ul>
+          <li><span class="en">Less suitable for impure/sedimentary water</span><span class="bn">অপরিশোধিত পানির জন্য কম উপযুক্ত</span></li>
+          <li><span class="en">Scale inside tubes → overheating &amp; bursting risk</span><span class="bn">টিউবে স্কেল → অতিরিক্ত গরম ও বিস্ফোরণের ঝুঁকি</span></li>
+          <li><span class="en">Higher operating &amp; maintenance cost</span><span class="bn">বেশি পরিচালন ও রক্ষণাবেক্ষণ খরচ</span></li>
+          <li><span class="en">Brief feedwater failure can cause overheating</span><span class="bn">সংক্ষিপ্ত ফিডওয়াটার ব্যর্থতায় অতিরিক্ত গরম</span></li>
+          <li><span class="en">Not good for rapid load changes (FTB better here)</span><span class="bn">দ্রুত লোড পরিবর্তনের জন্য FTB ভালো</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.10 Boiler Mountings -->
+  <div class="section" id="mountings">
+    <div class="section-title">বয়লার মাউন্টিং <span class="bn">/ Boiler Mountings</span></div>
+    <div class="bilingual">
+      <div class="lang-en">Fittings and devices <strong>necessary for safe operation</strong> of a boiler, mounted on the boiler shell.</div>
+      <div class="lang-bn">বয়লারের <strong>নিরাপদ পরিচালনার জন্য প্রয়োজনীয়</strong> যন্ত্রপাতি ও ডিভাইস, যা বয়লারের শেলের উপর লাগানো থাকে।</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Name / নাম</th><th>Function / কাজ</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Water Gauge / পানির মাপকাঠি</td><td>Shows water level inside the boiler / বয়লারের পানির স্তর দেখায়</td></tr>
+          <tr><td>2</td><td>Pressure Gauge / চাপ মাপক</td><td>Measures steam pressure / বাষ্পের চাপ পরিমাপ করে</td></tr>
+          <tr><td>3</td><td><strong>Pressure Relief Valve (Safety Valve)</strong> / নিরাপত্তা ভালভ</td><td>Automatically discharges steam when pressure exceeds normal limit. Two required per boiler. / চাপ সীমা ছাড়ালে স্বয়ংক্রিয়ভাবে বাষ্প নির্গত করে। প্রতিটি বয়লারে দুটি প্রয়োজন।</td></tr>
+          <tr><td>4</td><td>Steam Stop Valve / স্টিম স্টপ ভালভ</td><td>Controls steam supply to pipeline / পাইপলাইনে বাষ্প সরবরাহ নিয়ন্ত্রণ করে</td></tr>
+          <tr><td>5</td><td>Feed Check Valve / ফিড চেক ভালভ</td><td>Prevents backflow of water from boiler / বয়লার থেকে পানির বিপরীত প্রবাহ রোধ করে</td></tr>
+          <tr><td>6</td><td>Blow-down Valve / ব্লো-ডাউন ভালভ</td><td>Removes sediment from bottom / তলা থেকে পলি অপসারণ</td></tr>
+          <tr><td>7</td><td>Low Water Alarm / নিম্ন পানি সতর্কতা</td><td>Alerts when water is dangerously low / পানি বিপজ্জনকভাবে কম হলে সতর্ক করে</td></tr>
+          <tr><td>8</td><td>Man &amp; Mud Holes / ম্যান ও মাড হোল</td><td>Access for inspection &amp; cleaning / পরিদর্শন ও পরিষ্কারের জন্য প্রবেশপথ</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 1.11 Accessories -->
+  <div class="section" id="accessories">
+    <div class="section-title">বয়লার আনুষঙ্গিক যন্ত্র <span class="bn">/ Boiler Accessories</span></div>
+    <div class="bilingual">
+      <div class="lang-en">Auxiliary plants required for <strong>proper and efficient operation</strong> of the boiler (not mounted on the shell).</div>
+      <div class="lang-bn">বয়লারের <strong>সঠিক ও দক্ষ পরিচালনার</strong> জন্য সহায়ক যন্ত্রপাতি (শেলে লাগানো থাকে না)।</div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">Superheater / সুপারহিটার</div>
+        <div class="card-body">Heats dry saturated steam further at constant pressure → <em>superheated steam</em> (temperature rises above saturation temp). Improves turbine efficiency.<br><br>শুষ্ক সম্পৃক্ত বাষ্পকে ধ্রুব চাপে আরও গরম করে → <em>অতিউত্তপ্ত বাষ্প</em>। টার্বাইনের দক্ষতা বাড়ায়।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Economizer / ইকোনোমাইজার</div>
+        <div class="card-body">Uses waste flue gas heat to pre-heat feedwater before it enters the boiler. Reduces fuel consumption.<br><br>বয়লারে প্রবেশের আগে ফিডওয়াটারকে বর্জ্য ধোঁয়া গ্যাসের তাপ দিয়ে গরম করে। জ্বালানি সাশ্রয় করে।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Air Pre-heater</div>
+        <div class="card-body">Heats incoming air using flue gas heat before combustion, improving furnace efficiency.<br><br>দহনের আগে ধোঁয়া গ্যাসের তাপ ব্যবহার করে প্রবেশকারী বায়ু গরম করে।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Feed Pump / ফিড পাম্প</div>
+        <div class="card-body">Forces feedwater into the boiler against boiler pressure.<br><br>বয়লারের চাপের বিরুদ্ধে ফিডওয়াটার বয়লারে প্রেরণ করে।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Draught Equipment</div>
+        <div class="card-body">Ensures proper airflow for complete fuel combustion. Natural or forced draught.<br><br>সম্পূর্ণ জ্বালানি দহনের জন্য সঠিক বায়ু প্রবাহ নিশ্চিত করে।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.12 Steam Properties -->
+  <div class="section" id="steam-props">
+    <div class="section-title">বাষ্পের গুণাগুণ <span class="bn">/ Properties of Steam</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type / প্রকার</th><th>Description / বর্ণনা</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-blue">Wet Steam</span><br>আর্দ্র বাষ্প</td><td>Contains moisture / suspended water particles. / আর্দ্রতা বা ঝুলন্ত পানির কণা আছে।</td></tr>
+          <tr><td><span class="badge badge-green">Dry Steam</span><br>শুষ্ক বাষ্প</td><td>Contains no suspended water particles. / কোনো ঝুলন্ত পানির কণা নেই।</td></tr>
+          <tr><td><span class="badge badge-gold">Superheated Steam</span><br>অতিউত্তপ্ত বাষ্প</td><td>Dry steam heated further at constant pressure above saturation temperature. / ধ্রুব চাপে সম্পৃক্ত তাপমাত্রার উপরে আরও গরম করা শুষ্ক বাষ্প।</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="formula">
+      <span class="formula-label">Dryness Fraction / শুষ্কতা ভগ্নাংশ (Quality)</span>
+      x = m_s / (m_s + m_w)
+      <div class="formula-desc">m_s = mass of dry steam &nbsp;|&nbsp; m_w = mass of water in suspension (0 ≤ x ≤ 1)</div>
+    </div>
+  </div>
+
+  <!-- 1.13 Boiler Efficiency -->
+  <div class="section" id="efficiency">
+    <div class="section-title">বয়লারের দক্ষতা <span class="bn">/ Boiler Efficiency</span></div>
+    <div class="bilingual">
+      <div class="lang-en">Ratio of <em>heat utilized for steam generation</em> to <em>heat supplied by fuel combustion</em>.</div>
+      <div class="lang-bn"><em>বাষ্প উৎপাদনে ব্যবহৃত তাপ</em> এবং <em>জ্বালানি দহন থেকে সরবরাহকৃত তাপ</em>-এর অনুপাত।</div>
+    </div>
+    <div class="formula">
+      <span class="formula-label">Boiler Efficiency / বয়লার দক্ষতা (η)</span>
+      η = [m_s × (h − h₀)] / [m_f × HV]
+      <div class="formula-desc">
+        m_s = mass of steam evaporated &nbsp;|&nbsp; m_f = mass of fuel burnt<br>
+        h = enthalpy of steam &nbsp;|&nbsp; h₀ = enthalpy of feedwater &nbsp;|&nbsp; HV = heating value of fuel
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- CHAPTER 2: THERMODYNAMICS BASICS            -->
+<!-- ═══════════════════════════════════════════ -->
+<article class="chapter" id="ch2">
+  <div class="chapter-header">
+    <div class="chapter-num">LEC 5</div>
+    <div class="chapter-title">
+      <h2>Thermodynamics: Basics</h2>
+      <span class="bn-title">তাপগতিবিদ্যা: মূলতত্ত্ব</span>
+    </div>
+  </div>
+
+  <!-- Definition -->
+  <div class="section">
+    <div class="section-title">সংজ্ঞা <span class="bn">/ Definition</span></div>
+    <div class="def-box">
+      <div class="def-label">Thermodynamics</div>
+      <div class="bilingual">
+        <div class="lang-en">From Greek: <em>therme</em> (heat) + <em>dynamis</em> (power). Thermodynamics is the study of various processes that change energy from one form to another (e.g., heat → work), using variables like <strong>temperature, volume, and pressure</strong>.</div>
+        <div class="lang-bn">গ্রিক শব্দ: <em>therme</em> (তাপ) + <em>dynamis</em> (শক্তি)। তাপগতিবিদ্যা হলো বিভিন্ন প্রক্রিয়ার অধ্যয়ন যা শক্তিকে এক রূপ থেকে অন্য রূপে রূপান্তরিত করে (যেমন, তাপ → কাজ), <strong>তাপমাত্রা, আয়তন এবং চাপ</strong> ব্যবহার করে।</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong>Reference Book:</strong> <em>Thermodynamics: An Engineering Approach</em> — Yunus A. Çengel &amp; Michael A. Boles (7th ed.)
+    </div>
+  </div>
+
+  <!-- System -->
+  <div class="section" id="system">
+    <div class="section-title">সিস্টেম, সীমানা, পরিবেশ <span class="bn">/ System, Boundary, Surroundings</span></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>পরিভাষা / Term</th><th>বর্ণনা / Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>System</strong><br>সিস্টেম</td><td>A quantity of matter or region in space chosen for study. / অধ্যয়নের জন্য নির্বাচিত পদার্থের পরিমাণ বা স্থানের একটি অঞ্চল।</td></tr>
+          <tr><td><strong>Surroundings</strong><br>পরিবেশ</td><td>Everything external to the system. / সিস্টেমের বাইরের সবকিছু।</td></tr>
+          <tr><td><strong>Boundary</strong><br>সীমানা</td><td>Real/imaginary surface separating system from surroundings. Zero thickness. / সিস্টেম ও পরিবেশকে আলাদা করা বাস্তব/কল্পিত পৃষ্ঠ। শূন্য পুরুত্ব।</td></tr>
+          <tr><td><span class="badge badge-blue">Closed System</span> (Control Mass)</td><td>Fixed mass; <strong>NO</strong> mass crosses boundary. Energy (heat/work) CAN cross. / নির্দিষ্ট ভর; সীমানায় ভর প্রবেশ/বের হয় না। শক্তি প্রবেশ/বের হতে পারে।</td></tr>
+          <tr><td><span class="badge badge-gold">Open System</span> (Control Volume)</td><td>Both mass AND energy can cross the boundary. / ভর ও শক্তি উভয়ই সীমানা অতিক্রম করতে পারে।</td></tr>
+          <tr><td><span class="badge badge-red">Isolated System</span></td><td>Neither mass NOR energy crosses boundary. / ভর ও শক্তি কোনোটিই সীমানা অতিক্রম করতে পারে না।</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Property, State, Process, Cycle -->
+  <div class="section" id="property-state">
+    <div class="section-title">ধর্ম, অবস্থা, প্রক্রিয়া, চক্র <span class="bn">/ Property, State, Process, Cycle</span></div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">Property / ধর্ম</div>
+        <div class="card-body">A macroscopic characteristic (mass, volume, pressure, temperature) assignable at a given time without prior history. সিস্টেমের যেকোনো সময়ে নির্ধারণযোগ্য ভৌত বৈশিষ্ট্য।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">State / অবস্থা</div>
+        <div class="card-body">Condition of a system characterized by its properties. A set of property values fixes the state. সিস্টেমের ধর্মের মান দ্বারা নির্ধারিত অবস্থা।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Process / প্রক্রিয়া</div>
+        <div class="card-body">When any property changes, the system undergoes a <strong>process</strong> — a transformation from one state to another. ধর্ম পরিবর্তন হলে সিস্টেম একটি প্রক্রিয়ার মধ্য দিয়ে যায়।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Cycle / চক্র</div>
+        <div class="card-body">A sequence of processes that begins and ends at the <strong>same state</strong>. E.g., refrigeration cycle. একই অবস্থায় শুরু ও শেষ হওয়া প্রক্রিয়াগুলির ধারাবাহিকতা।</div>
+      </div>
+    </div>
+
+    <div class="bilingual">
+      <div class="lang-en"><strong>Reversible Process:</strong> Can be reversed without leaving any trace on the surroundings; net heat and net work exchange = zero for combined process.<br><strong>Irreversible Process:</strong> Cannot be fully reversed. Causes: friction, mixing, heat transfer across finite ΔT, electrical resistance, inelastic deformation, chemical reactions.</div>
+      <div class="lang-bn"><strong>বিপরীতমুখী প্রক্রিয়া:</strong> পরিবেশে কোনো চিহ্ন না রেখে উল্টানো যায়; সম্মিলিত প্রক্রিয়ায় নেট তাপ ও কাজের বিনিময় = শূন্য।<br><strong>অপরিবর্তনীয় প্রক্রিয়া:</strong> সম্পূর্ণভাবে উল্টানো যায় না। কারণ: ঘর্ষণ, মিশ্রণ, সীমিত ΔT তে তাপ স্থানান্তর, বৈদ্যুতিক রোধ ইত্যাদি।</div>
+    </div>
+  </div>
+
+  <!-- Intensive vs Extensive -->
+  <div class="section" id="intensive-extensive">
+    <div class="section-title">তীব্র ও বিস্তৃত ধর্ম <span class="bn">/ Intensive &amp; Extensive Properties</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Property</th><th>Extensive (বিস্তৃত)</th><th>Intensive (তীব্র)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Mass / ভর</td><td>m</td><td>ρ (density)</td></tr>
+          <tr><td>Volume / আয়তন</td><td>Ṽ</td><td>v (specific volume)</td></tr>
+          <tr><td>KE / গতিশক্তি</td><td>½mV²</td><td>½V²</td></tr>
+          <tr><td>PE / বিভবশক্তি</td><td>mgZ</td><td>gZ</td></tr>
+          <tr><td>Total Energy</td><td>E</td><td>e</td></tr>
+          <tr><td>Internal Energy / অভ্যন্তরীণ শক্তি</td><td>U</td><td>u</td></tr>
+          <tr><td>Enthalpy / এনথালপি</td><td>H</td><td>h</td></tr>
+          <tr><td>Entropy / এন্ট্রপি</td><td>S</td><td>s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="key-point">
+      <div class="bilingual">
+        <div class="lang-en"><strong>Intensive</strong> properties are <em>independent of mass</em> (pressure, temperature, density). <strong>Extensive</strong> properties <em>depend on mass</em> (volume, energy, entropy).</div>
+        <div class="lang-bn"><strong>তীব্র</strong> ধর্ম <em>ভর-নিরপেক্ষ</em> (চাপ, তাপমাত্রা, ঘনত্ব)। <strong>বিস্তৃত</strong> ধর্ম <em>ভরের উপর নির্ভরশীল</em> (আয়তন, শক্তি, এন্ট্রপি)।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Internal Energy & Enthalpy -->
+  <div class="section" id="internal-enthalpy">
+    <div class="section-title">অভ্যন্তরীণ শক্তি ও এনথালপি <span class="bn">/ Internal Energy &amp; Enthalpy</span></div>
+    <div class="def-box">
+      <div class="def-label">Internal Energy (U)</div>
+      <div class="bilingual">
+        <div class="lang-en">Sum of kinetic and potential energies of all atoms, ions, and molecules of the system. Value depends on temperature and pressure. <em>Total value unmeasurable</em>, but <strong>change</strong> is measurable (= heat + work transferred).</div>
+        <div class="lang-bn">সিস্টেমের সমস্ত পরমাণু, আয়ন ও অণুর গতিশক্তি ও বিভবশক্তির যোগফল। মান তাপমাত্রা ও চাপের উপর নির্ভর করে। <em>মোট মান পরিমাপযোগ্য নয়</em>, তবে <strong>পরিবর্তন</strong> পরিমাপযোগ্য।</div>
+      </div>
+    </div>
+    <div class="def-box">
+      <div class="def-label">Enthalpy (H)</div>
+      <div class="bilingual">
+        <div class="lang-en">Thermodynamic property defined as internal energy plus the product of pressure and volume. At constant pressure, change in enthalpy = change in internal energy + work done by system.</div>
+        <div class="lang-bn">অভ্যন্তরীণ শক্তি এবং চাপ ও আয়তনের গুণফলের সমষ্টি হিসেবে সংজ্ঞায়িত তাপগতিক ধর্ম। ধ্রুব চাপে, এনথালপির পরিবর্তন = অভ্যন্তরীণ শক্তির পরিবর্তন + সিস্টেমের কৃতকার্য।</div>
+      </div>
+    </div>
+    <div class="formula">
+      <span class="formula-label">Enthalpy Definition</span>
+      ΔH = ΔU + Δ(PV)
+    </div>
+  </div>
+
+  <!-- Pressure Types -->
+  <div class="section" id="pressure-types">
+    <div class="section-title">চাপের প্রকারভেদ <span class="bn">/ Types of Pressure</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Absolute Pressure</strong> / পরম চাপ</td><td>P_abs</td><td>Measured from absolute zero (perfect vacuum). P_abs = P_atm + P_gage. পরম শূন্য থেকে পরিমাপ।</td></tr>
+          <tr><td><strong>Gauge Pressure</strong> / গেজ চাপ</td><td>P_gage</td><td>Pressure above atmospheric. P_gage = P_abs − P_atm. বায়ুমণ্ডলীয় চাপের উপরে।</td></tr>
+          <tr><td><strong>Vacuum Pressure</strong> / ভ্যাকুয়াম চাপ</td><td>P_vac</td><td>Pressure below atmospheric. P_vac = P_atm − P_abs. বায়ুমণ্ডলীয় চাপের নিচে।</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- CHAPTER 3: THERMODYNAMIC LAWS               -->
+<!-- ═══════════════════════════════════════════ -->
+<article class="chapter" id="ch3">
+  <div class="chapter-header">
+    <div class="chapter-num">LEC 6</div>
+    <div class="chapter-title">
+      <h2>Thermodynamic Laws</h2>
+      <span class="bn-title">তাপগতিবিদ্যার সূত্রসমূহ</span>
+    </div>
+  </div>
+
+  <!-- Phase Diagram -->
+  <div class="section" id="phase-diagram">
+    <div class="section-title">দশা-চিত্র <span class="bn">/ Phase Diagrams</span></div>
+    <div class="bilingual">
+      <div class="lang-en"><strong>Saturation Temperature (T_sat):</strong> Temperature at which a pure substance changes phase at a given pressure.<br><strong>Saturation Pressure (P_sat):</strong> Pressure at which phase change occurs at a given temperature.<br><em>Example:</em> For water at 101.3 kPa, T_sat = 99.97°C.</div>
+      <div class="lang-bn"><strong>সম্পৃক্ত তাপমাত্রা (T_sat):</strong> নির্দিষ্ট চাপে বিশুদ্ধ পদার্থের দশা পরিবর্তনের তাপমাত্রা।<br><strong>সম্পৃক্ত চাপ (P_sat):</strong> নির্দিষ্ট তাপমাত্রায় দশা পরিবর্তনের চাপ।<br><em>উদাহরণ:</em> পানির জন্য ১০১.৩ kPa তে T_sat = ৯৯.৯৭°C।</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>T-H Diagram Process</th><th>বর্ণনা / Description</th></tr></thead>
+        <tbody>
+          <tr><td>1 → 2</td><td>Water heated from T₁ to T₂ (subcooled liquid) / পানি T₁ থেকে T₂ তে গরম হওয়া</td></tr>
+          <tr><td>2 → 3</td><td>Water vaporized into dry steam at constant T &amp; P (phase change) / ধ্রুব T ও P তে শুষ্ক বাষ্পে পরিণত</td></tr>
+          <tr><td>3 → 4</td><td>Dry steam superheated to T₄ / শুষ্ক বাষ্পকে T₄ পর্যন্ত অতিউত্তপ্ত করা</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="key-point">
+      <div class="bilingual">
+        <div class="lang-en"><strong>Critical Point for water:</strong> 374°C and 22.06 MPa — above this no phase boundary exists. The T-v diagram shows: Subcooled liquid → Saturated liquid → Two-phase (wet steam) → Saturated vapor → Superheated vapor.</div>
+        <div class="lang-bn"><strong>পানির ক্রান্তিক বিন্দু:</strong> ৩৭৪°C ও ২২.০৬ MPa — এর উপরে কোনো দশা সীমানা নেই। T-v চিত্রে: অবসম্পৃক্ত তরল → সম্পৃক্ত তরল → দ্বিদশা (আর্দ্র বাষ্প) → সম্পৃক্ত বাষ্প → অতিউত্তপ্ত বাষ্প।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zeroth Law -->
+  <div class="section" id="zeroth">
+    <div class="section-title">শূন্যতম সূত্র <span class="bn">/ Zeroth Law of Thermodynamics</span></div>
+    <div class="def-box">
+      <div class="def-label">Zeroth Law</div>
+      <div class="bilingual">
+        <div class="lang-en">If system A is in thermal equilibrium with system C, and system B is in thermal equilibrium with system C, then <strong>A is in thermal equilibrium with B</strong>. This is the basis of temperature measurement (thermometer).</div>
+        <div class="lang-bn">যদি সিস্টেম A, সিস্টেম C এর সাথে তাপীয় সাম্যাবস্থায় থাকে এবং সিস্টেম B, সিস্টেম C এর সাথে তাপীয় সাম্যাবস্থায় থাকে, তাহলে <strong>A ও B তাপীয় সাম্যাবস্থায় আছে</strong>। এটি তাপমাত্রা পরিমাপের (থার্মোমিটার) ভিত্তি।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- First Law -->
+  <div class="section" id="first-law">
+    <div class="section-title">প্রথম সূত্র <span class="bn">/ First Law of Thermodynamics</span></div>
+    <div class="bilingual">
+      <div class="lang-en">The change in internal energy of a closed system = heat supplied − work done by the system. Also known as the <strong>Conservation of Energy Principle</strong>.</div>
+      <div class="lang-bn">বদ্ধ সিস্টেমের অভ্যন্তরীণ শক্তির পরিবর্তন = সরবরাহকৃত তাপ − সিস্টেমের কৃতকার্য। এটি <strong>শক্তির সংরক্ষণ নীতি</strong> নামেও পরিচিত।</div>
+    </div>
+    <div class="formula">
+      <span class="formula-label">First Law (Closed System)</span>
+      dU = δQ − δW
+      <div class="formula-desc">dU = change in internal energy &nbsp;|&nbsp; δQ = heat added &nbsp;|&nbsp; δW = work done by system</div>
+    </div>
+    <div class="warn-box">
+      <strong>Planck's Statement (Perpetual Motion Machine of 1st Kind):</strong>
+      <div class="bilingual">
+        <div class="lang-en">It is impossible to construct an engine which will work in a cycle and produce continuous work from nothing — <em>"Perpetual motion machines of the first kind are impossible."</em></div>
+        <div class="lang-bn">এমন ইঞ্জিন তৈরি করা অসম্ভব যা একটি চক্রে কাজ করে এবং কিছু না করেই অবিরাম কাজ উৎপাদন করে — <em>"প্রথম প্রকারের চিরগতি যন্ত্র অসম্ভব।"</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Heat Engines -->
+  <div class="section" id="heat-engine">
+    <div class="section-title">তাপ ইঞ্জিন <span class="bn">/ Heat Engines</span></div>
+    <div class="bilingual">
+      <div class="lang-en">Work → heat directly and completely. But heat → work requires <strong>heat engines</strong>.</div>
+      <div class="lang-bn">কাজ → তাপ সরাসরি ও সম্পূর্ণভাবে। কিন্তু তাপ → কাজের জন্য <strong>তাপ ইঞ্জিন</strong> প্রয়োজন।</div>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="card-icon">🔴</div><div class="card-title">Receive Heat (Q_H)</div><div class="card-body">From high-temperature source (furnace, reactor). উচ্চ তাপমাত্রার উৎস থেকে তাপ গ্রহণ।</div></div>
+      <div class="card"><div class="card-icon">⚙️</div><div class="card-title">Convert to Work (W_net)</div><div class="card-body">Portion of heat → useful work (rotating shaft). তাপের একাংশ → দরকারী কাজ।</div></div>
+      <div class="card"><div class="card-icon">🔵</div><div class="card-title">Reject Heat (Q_L)</div><div class="card-body">Waste heat to low-temperature sink (atmosphere). নিম্ন তাপমাত্রায় বর্জ্য তাপ ত্যাগ।</div></div>
+      <div class="card"><div class="card-icon">🔄</div><div class="card-title">Operate on a Cycle</div><div class="card-body">Returns to initial state repeatedly. বারবার প্রাথমিক অবস্থায় ফিরে আসে।</div></div>
+    </div>
+    <div class="formula">
+      <span class="formula-label">Thermal Efficiency / তাপীয় দক্ষতা (η_th)</span>
+      η_th = W_net,out / Q_H = 1 − (Q_L / Q_H)
+      <div class="formula-desc">Always less than 1 (100%) — second law limitation. &nbsp;|&nbsp; সর্বদা ১ এর চেয়ে কম।</div>
+    </div>
+  </div>
+
+  <!-- Second Law -->
+  <div class="section" id="second-law">
+    <div class="section-title">দ্বিতীয় সূত্র <span class="bn">/ Second Law of Thermodynamics</span></div>
+    <div class="bilingual">
+      <div class="lang-en">Defines the concept of <strong>entropy</strong>. Historical origin: Sadi Carnot (1824). Two major statements by Lord Kelvin (1851) and Rudolf Clausius (1854).</div>
+      <div class="lang-bn"><strong>এন্ট্রপির</strong> ধারণা সংজ্ঞায়িত করে। ঐতিহাসিক উৎপত্তি: সাদি কার্নো (১৮২৪)। দুটি প্রধান বিবৃতি: লর্ড কেলভিন (১৮৫১) ও রুডলফ ক্লসিয়াস (১৮৫৪)।</div>
+    </div>
+    <div class="def-box">
+      <div class="def-label">Kelvin–Planck Statement / কেলভিন-প্ল্যাংক বিবৃতি</div>
+      <div class="bilingual">
+        <div class="lang-en">"It is impossible for any device that operates on a cycle to receive heat from a single reservoir and produce a net amount of work." → <em>No heat engine can have 100% efficiency.</em></div>
+        <div class="lang-bn">"কোনো ডিভাইসের পক্ষে একটি চক্রে চলে একটিমাত্র আধার থেকে তাপ নিয়ে নিট কাজ উৎপাদন করা অসম্ভব।" → <em>কোনো তাপ ইঞ্জিনের ১০০% দক্ষতা থাকতে পারে না।</em></div>
+      </div>
+    </div>
+    <div class="def-box">
+      <div class="def-label">Clausius Statement / ক্লসিয়াস বিবৃতি</div>
+      <div class="bilingual">
+        <div class="lang-en">"It is impossible to construct a device that operates in a cycle and produces no effect other than the transfer of heat from a lower-temperature body to a higher-temperature body." → <em>The two statements are equivalent.</em></div>
+        <div class="lang-bn">"এমন কোনো ডিভাইস তৈরি করা অসম্ভব যা একটি চক্রে চলে এবং নিম্ন তাপমাত্রা থেকে উচ্চ তাপমাত্রায় তাপ স্থানান্তর ছাড়া অন্য কোনো প্রভাব উৎপন্ন করে না।" → <em>দুটি বিবৃতি সমতুল্য।</em></div>
+      </div>
+    </div>
+    <div class="key-point">
+      <div class="bilingual">
+        <div class="lang-en"><strong>Unified Statement:</strong> "The total energy content of the universe is constant (<em>1st Law</em>), and the total entropy is continually increasing (<em>2nd Law</em>)."</div>
+        <div class="lang-bn"><strong>সমন্বিত বিবৃতি:</strong> "মহাবিশ্বের মোট শক্তি অপরিবর্তিত থাকে (<em>১ম সূত্র</em>), এবং মোট এন্ট্রপি ক্রমাগত বাড়ছে (<em>২য় সূত্র</em>)।"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entropy -->
+  <div class="section" id="entropy">
+    <div class="section-title">এন্ট্রপি <span class="bn">/ Entropy</span></div>
+    <div class="bilingual">
+      <div class="lang-en">
+        Every energy transformation incurs a <strong>penalty</strong> — a reduction in available energy for useful work. This penalty is <em>entropy</em>. Entropy is a measure of energy <strong>no longer capable of performing work</strong>. It can also be viewed as a change from an ordered to a disordered state.<br><br>
+        <strong>Key facts:</strong> Entropy of a system can <em>never decrease</em> (systems always move toward maximum entropy = thermodynamic equilibrium). Time moves only one direction → entropy always increases. Entropy is changed by heat transfer and irreversibility.
+      </div>
+      <div class="lang-bn">
+        প্রতিটি শক্তি রূপান্তরে একটি <strong>জরিমানা</strong> ধার্য হয় — দরকারী কাজের জন্য উপলব্ধ শক্তি হ্রাস পায়। এই জরিমানাই <em>এন্ট্রপি</em>। এন্ট্রপি হলো সেই শক্তির পরিমাপ যা আর কাজ করতে পারে না।<br><br>
+        <strong>মূল তথ্য:</strong> সিস্টেমের এন্ট্রপি কখনো <em>কমতে পারে না</em>। সময় একমুখী → এন্ট্রপি সর্বদা বাড়ে। তাপ স্থানান্তর ও অপরিবর্তনীয়তার মাধ্যমে এন্ট্রপি পরিবর্তিত হয়।
+      </div>
+    </div>
+    <div class="note-box">
+      <strong>Isentropic Process / আইসেন্ট্রপিক প্রক্রিয়া:</strong>
+      <div class="bilingual">
+        <div class="lang-en">An internally reversible AND adiabatic process where entropy remains constant (ΔS = 0). Ideal turbines and compressors are modeled as isentropic.</div>
+        <div class="lang-bn">একটি অভ্যন্তরীণভাবে বিপরীতমুখী ও তাপরোধী প্রক্রিয়া যেখানে এন্ট্রপি স্থির থাকে (ΔS = 0)। আদর্শ টার্বাইন ও কম্প্রেসারকে আইসেন্ট্রপিক হিসেবে মডেল করা হয়।</div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- CHAPTER 4: THERMODYNAMIC CYCLES             -->
+<!-- ═══════════════════════════════════════════ -->
+<article class="chapter" id="ch4">
+  <div class="chapter-header">
+    <div class="chapter-num">LEC 7</div>
+    <div class="chapter-title">
+      <h2>Thermodynamic Cycles</h2>
+      <span class="bn-title">তাপগতিচক্র</span>
+    </div>
+  </div>
+
+  <!-- Overview -->
+  <div class="section" id="power-cycles">
+    <div class="section-title">পাওয়ার সাইকেল ও শীতলীকরণ সাইকেল <span class="bn">/ Power &amp; Refrigeration Cycles</span></div>
+    <div class="bilingual">
+      <div class="lang-en">Two important areas of application: <strong>power generation</strong> and <strong>refrigeration</strong>. Thermodynamic cycles are divided into: (1) <em>Power cycles</em> (produce net work output) and (2) <em>Refrigeration cycles</em> (transfer heat from cold to hot).</div>
+      <div class="lang-bn">দুটি গুরুত্বপূর্ণ প্রয়োগক্ষেত্র: <strong>শক্তি উৎপাদন</strong> ও <strong>শীতলীকরণ</strong>। তাপগতিচক্র দুই প্রকার: (১) <em>পাওয়ার সাইকেল</em> (নিট কাজ উৎপাদন করে) এবং (২) <em>রেফ্রিজারেশন সাইকেল</em> (ঠান্ডা থেকে গরমে তাপ স্থানান্তর)।</div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-col-header">Gas Cycles / গ্যাস সাইকেল</div>
+        <ul>
+          <li><span class="en">Working fluid remains in <strong>gaseous phase</strong> throughout</span><span class="bn">কার্যকর তরল সর্বদা <strong>গ্যাসীয় অবস্থায়</strong></span></li>
+          <li><span class="en">SI Engines → <strong>Otto Cycle</strong></span><span class="bn">SI ইঞ্জিন → <strong>অটো সাইকেল</strong></span></li>
+          <li><span class="en">Gas turbines → <strong>Brayton Cycle</strong></span><span class="bn">গ্যাস টার্বাইন → <strong>ব্রেটন সাইকেল</strong></span></li>
+          <li><span class="en">Diesel Engines → <strong>Diesel Cycle</strong></span><span class="bn">ডিজেল ইঞ্জিন → <strong>ডিজেল সাইকেল</strong></span></li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <div class="compare-col-header">Vapor Cycles / বাষ্প সাইকেল</div>
+        <ul>
+          <li><span class="en">Working fluid alternates between <strong>vapor and liquid</strong></span><span class="bn">কার্যকর তরল <strong>বাষ্প ও তরল</strong> এর মধ্যে পরিবর্তিত হয়</span></li>
+          <li><span class="en"><strong>Steam</strong> is most common — low cost, high h_fg</span><span class="bn"><strong>বাষ্প</strong> সবচেয়ে সাধারণ — কম খরচ, উচ্চ h_fg</span></li>
+          <li><span class="en">Coal, nuclear, natural gas plants → <strong>Rankine Cycle</strong></span><span class="bn">কয়লা, পারমাণবিক, প্রাকৃতিক গ্যাস প্ল্যান্ট → <strong>র‌্যাংকিন সাইকেল</strong></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>Ideal cycle assumptions / আদর্শ সাইকেলের অনুমান:</strong>
+      <div class="bilingual">
+        <div class="lang-en">(1) No friction — no pressure drop in pipes. (2) All expansion &amp; compression are <em>isentropic</em>. (3) Pipes are well insulated — heat transfer negligible (adiabatic). (4) Changes in KE and PE of working fluid neglected.</div>
+        <div class="lang-bn">(১) কোনো ঘর্ষণ নেই — পাইপে চাপ হ্রাস নেই। (২) সব প্রসারণ ও সংকোচন <em>আইসেন্ট্রপিক</em>। (৩) পাইপ সুপরিরোধী — তাপ স্থানান্তর অবহেলাযোগ্য। (৪) কার্যকর তরলের KE ও PE এর পরিবর্তন অবহেলাযোগ্য।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carnot Cycle -->
+  <div class="section" id="carnot">
+    <div class="section-title">কার্নো সাইকেল <span class="bn">/ Carnot Cycle</span></div>
+    <div class="bilingual">
+      <div class="lang-en">Proposed by <strong>Sadi Carnot (1824)</strong>. The <em>ideal and best possible cycle</em> — totally (internally + externally) reversible: <strong>4 reversible processes</strong>. Sets the maximum efficiency standard — no cycle can be more efficient.</div>
+      <div class="lang-bn"><strong>সাদি কার্নো (১৮২৪)</strong> কর্তৃক প্রস্তাবিত। <em>আদর্শ ও সর্বোত্তম সম্ভাব্য সাইকেল</em> — সম্পূর্ণভাবে বিপরীতমুখী: <strong>৪টি বিপরীতমুখী প্রক্রিয়া</strong>। সর্বোচ্চ দক্ষতার মানদণ্ড — কোনো সাইকেল এর চেয়ে বেশি দক্ষ হতে পারে না।</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Process</th><th>Description</th><th>বর্ণনা</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1→2</strong></td><td>Reversible adiabatic compression (P₁ → P₂)</td><td>বিপরীতমুখী তাপরোধী সংকোচন</td></tr>
+          <tr><td><strong>2→3</strong></td><td>Reversible isothermal heat addition at T_H</td><td>T_H তে বিপরীতমুখী সমতাপ তাপ যোগ</td></tr>
+          <tr><td><strong>3→4</strong></td><td>Reversible adiabatic expansion (P₃ → P₄)</td><td>বিপরীতমুখী তাপরোধী প্রসারণ</td></tr>
+          <tr><td><strong>4→1</strong></td><td>Reversible isothermal heat rejection at T_L</td><td>T_L তে বিপরীতমুখী সমতাপ তাপ প্রত্যাখ্যান</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="formula">
+      <span class="formula-label">Carnot Efficiency / কার্নো দক্ষতা</span>
+      η_carnot = (T_H − T_L) / T_H = 1 − (T_L / T_H)
+      <div class="formula-desc">T_H = source temperature (K) &nbsp;|&nbsp; T_L = sink temperature (K) &nbsp;|&nbsp; Depends only on temperatures.</div>
+    </div>
+
+    <div class="key-point">
+      <div class="bilingual">
+        <div class="lang-en">On a T-s diagram: area under heat addition curve = q_in; area under heat rejection curve = q_out; <strong>enclosed area = net work output</strong>.</div>
+        <div class="lang-bn">T-s চিত্রে: তাপ যোগ বক্ররেখার নিচের ক্ষেত্রফল = q_in; তাপ প্রত্যাখ্যান বক্ররেখার নিচের ক্ষেত্রফল = q_out; <strong>আবদ্ধ ক্ষেত্রফল = নিট কার্যোৎপাদন</strong>।</div>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <strong>Impracticalities of Carnot Cycle / কার্নো সাইকেলের অব্যবহারিক দিক:</strong>
+      <div class="bilingual">
+        <div class="lang-en">
+          (a) Very difficult to add/reject heat at constant temperature — easier at constant pressure.<br>
+          (b) Steam quality decreases during isentropic expansion. Turbines cannot handle steam quality &lt; 90% (liquid droplets cause blade <em>erosion</em>).<br>
+          (c) Isentropic compression of liquid-vapor mixture to saturated liquid — difficult to control precisely; compressors cannot handle two phases.
+        </div>
+        <div class="lang-bn">
+          (a) ধ্রুব তাপমাত্রায় তাপ যোগ/বিয়োগ অত্যন্ত কঠিন — ধ্রুব চাপে অনেক সহজ।<br>
+          (b) আইসেন্ট্রপিক প্রসারণে বাষ্পের মান কমে। টার্বাইন ৯০% এর কম মানের বাষ্প নিতে পারে না (তরল ফোঁটায় ব্লেডে <em>ক্ষয়</em>)।<br>
+          (c) তরল-বাষ্প মিশ্রণকে সম্পৃক্ত তরলে সংকুচিত করা কঠিন; কম্প্রেসার দুটি দশা পরিচালনা করতে পারে না।
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rankine Cycle -->
+  <div class="section" id="rankine">
+    <div class="section-title">আদর্শ র‌্যাংকিন সাইকেল <span class="bn">/ Ideal Rankine Cycle</span></div>
+    <div class="bilingual">
+      <div class="lang-en">The <strong>ideal cycle for vapor power plants</strong>. No internal irreversibilities. Addresses Carnot's impracticalities by completing condensation and pumping liquid (not mixture).</div>
+      <div class="lang-bn"><strong>বাষ্প শক্তি কেন্দ্রের আদর্শ সাইকেল</strong>। কোনো অভ্যন্তরীণ অপরিবর্তনীয়তা নেই। কার্নোর অব্যবহারিক দিকগুলি সমাধান করে — সম্পূর্ণ ঘনীভবন এবং তরল পাম্প করা।</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Process</th><th>Device</th><th>Description</th><th>বর্ণনা</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1→2</strong></td><td>Pump / পাম্প</td><td>Isentropic compression of liquid (low P → high P)</td><td>তরলের আইসেন্ট্রপিক সংকোচন (নিম্ন P → উচ্চ P)</td></tr>
+          <tr><td><strong>2→3</strong></td><td>Boiler / বয়লার</td><td>Constant pressure heat addition (liquid → superheated steam)</td><td>ধ্রুব চাপে তাপ যোগ (তরল → অতিউত্তপ্ত বাষ্প)</td></tr>
+          <tr><td><strong>3→4</strong></td><td>Turbine / টার্বাইন</td><td>Isentropic expansion (high P steam → low P)</td><td>আইসেন্ট্রপিক প্রসারণ (উচ্চ P বাষ্প → নিম্ন P)</td></tr>
+          <tr><td><strong>4→1</strong></td><td>Condenser / কনডেন্সার</td><td>Constant pressure heat rejection (wet steam → saturated liquid)</td><td>ধ্রুব চাপে তাপ প্রত্যাখ্যান (আর্দ্র বাষ্প → সম্পৃক্ত তরল)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="formula">
+      <span class="formula-label">Isentropic Pump Efficiency</span>
+      η_P = (h_{2s} − h₁) / (h_{2a} − h₁)
+    </div>
+    <div class="formula">
+      <span class="formula-label">Isentropic Turbine Efficiency</span>
+      η_T = (h₃ − h_{4a}) / (h₃ − h_{4s})
+      <div class="formula-desc">subscript s = isentropic &nbsp;|&nbsp; subscript a = actual &nbsp;|&nbsp; h = specific enthalpy</div>
+    </div>
+    <div class="key-point">
+      <div class="bilingual">
+        <div class="lang-en">Most of today's vapor power plants have <strong>thermal efficiencies up to ~40%</strong> due to the second law limitation. Coal &amp; nuclear: Rankine cycle. Natural gas: Brayton cycle.</div>
+        <div class="lang-bn">দ্বিতীয় সূত্রের সীমাবদ্ধতার কারণে আজকের বেশিরভাগ বাষ্প শক্তিকেন্দ্রের <strong>তাপীয় দক্ষতা ~৪০% পর্যন্ত</strong>। কয়লা ও পারমাণবিক: র‌্যাংকিন সাইকেল। প্রাকৃতিক গ্যাস: ব্রেটন সাইকেল।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deviations -->
+  <div class="section" id="deviations">
+    <div class="section-title">আদর্শ থেকে বিচ্যুতি <span class="bn">/ Deviations from Ideal Cycle</span></div>
+    <div class="bilingual">
+      <div class="lang-en">Actual vapor cycles differ from the ideal Rankine cycle due to <strong>irreversibilities</strong>. Two common sources: <em>fluid friction</em> (causes pressure drop) and <em>heat loss to surroundings</em>.</div>
+      <div class="lang-bn">প্রকৃত বাষ্প সাইকেল <strong>অপরিবর্তনীয়তার</strong> কারণে আদর্শ র‌্যাংকিন সাইকেল থেকে বিচ্যুত হয়। দুটি সাধারণ কারণ: <em>তরল ঘর্ষণ</em> (চাপ হ্রাস ঘটায়) এবং <em>পরিবেশে তাপ ক্ষতি</em>।</div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">Pump Irreversibility</div>
+        <div class="card-body">Requires more work input than ideal isentropic case. আদর্শের চেয়ে বেশি কাজ ইনপুট প্রয়োজন।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Turbine Irreversibility</div>
+        <div class="card-body">Produces less work output than ideal (most important!). আদর্শের চেয়ে কম কাজ উৎপাদন (সবচেয়ে গুরুত্বপূর্ণ!)।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Pressure Drop in Boiler</div>
+        <div class="card-body">Fluid friction causes pressure drop → pump needs higher pressure. ঘর্ষণে চাপ হ্রাস → পাম্পকে বেশি চাপে কাজ করতে হয়।</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Heat Loss</div>
+        <div class="card-body">More heat must be added in boiler to compensate losses → lower efficiency. ক্ষতি পূরণে বেশি তাপ যোগ করতে হয় → দক্ষতা কম।</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong>Improved Performance:</strong>
+      <div class="bilingual">
+        <div class="lang-en">Improved thermodynamic performance is achieved by <em>reducing irreversibilities and losses</em> in turbine, pump, boiler, and condenser.</div>
+        <div class="lang-bn">টার্বাইন, পাম্প, বয়লার ও কনডেন্সারে <em>অপরিবর্তনীয়তা ও ক্ষতি হ্রাস</em> করে উন্নত তাপগতীয় কার্যক্ষমতা অর্জন করা হয়।</div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- QUICK REVISION TABLE                        -->
+<!-- ═══════════════════════════════════════════ -->
+<article class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">RECAP</div>
+    <div class="chapter-title">
+      <h2>Quick Revision</h2>
+      <span class="bn-title">দ্রুত পুনরাবৃত্তি</span>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Topic</th><th>Key Formula / Concept</th><th>বাংলা সারসংক্ষেপ</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Boiler Efficiency</td><td>η = m_s(h−h₀) / (m_f × HV)</td><td>বাষ্প উৎপাদনে ব্যবহৃত তাপ / সরবরাহকৃত তাপ</td></tr>
+        <tr><td>Dryness Fraction</td><td>x = m_s / (m_s + m_w)</td><td>মোট আর্দ্র বাষ্পে শুষ্ক বাষ্পের ভর অনুপাত</td></tr>
+        <tr><td>First Law</td><td>dU = δQ − δW</td><td>শক্তির সংরক্ষণ: অভ্যন্তরীণ শক্তির পরিবর্তন = তাপ − কাজ</td></tr>
+        <tr><td>Enthalpy</td><td>ΔH = ΔU + Δ(PV)</td><td>অভ্যন্তরীণ শক্তি + চাপ×আয়তনের পরিবর্তন</td></tr>
+        <tr><td>Thermal Efficiency</td><td>η_th = 1 − Q_L/Q_H</td><td>নিট কাজ / মোট তাপ ইনপুট</td></tr>
+        <tr><td>Carnot Efficiency</td><td>η_carnot = 1 − T_L/T_H</td><td>সর্বোচ্চ সম্ভাব্য দক্ষতা (শুধু তাপমাত্রার উপর নির্ভরশীল)</td></tr>
+        <tr><td>Saturation (Water)</td><td>T_sat = 100°C at 101.3 kPa</td><td>বায়ুমণ্ডলীয় চাপে পানির স্ফুটনাঙ্ক</td></tr>
+        <tr><td>Critical Point (Water)</td><td>374°C, 22.06 MPa</td><td>পানির ক্রান্তিক বিন্দু — উপরে কোনো দশা পার্থক্য নেই</td></tr>
+        <tr><td>Steam volume increase</td><td>~1600× on boiling</td><td>ফুটলে পানির আয়তন ~১৬০০ গুণ বাড়ে</td></tr>
+        <tr><td>WTB efficiency</td><td>Higher than FTB</td><td>FTB এর চেয়ে বেশি দক্ষ</td></tr>
+        <tr><td>Vapor plant efficiency</td><td>Up to ~40%</td><td>বাষ্প শক্তিকেন্দ্রের দক্ষতা ~৪০% পর্যন্ত</td></tr>
+        <tr><td>Rankine vs Carnot</td><td>Rankine &lt; Carnot (η)</td><td>র‌্যাংকিন দক্ষতা কার্নোর চেয়ে কম (বাস্তব কারণে)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</article>
+
+</main>
+</div>
+
+<footer>
+  ME 161 — Introduction to Mechanical Engineering · BUET<br>
+  হ্যান্ড নোট তৈরিতে ব্যবহৃত বিষয়বস্তু: Lec 2, 3, 5, 6, 7 | Dr. Md. Ashiqur Rahman
+</footer>
+
+<script>
+  function setLang(cls) {
+    document.body.className = cls;
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('onclick').includes(cls));
+    });
+  }
+
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const tocLinks = document.querySelectorAll('.toc a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.toc a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-160px 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
