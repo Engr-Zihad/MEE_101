@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steam Turbine — Class Notes | ME 161</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0b1e38;
+    --navy-2:#123059;
+    --brass:#c1793f;
+    --brass-light:#e0a868;
+    --paper:#f6f2e8;
+    --paper-2:#ece5d2;
+    --ink:#1c1a15;
+    --ink-soft:#4c473c;
+    --line:#d9d0b9;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Source Sans 3', sans-serif;
+    line-height:1.55;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  /* HERO */
+  .hero{
+    background:linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 60%, #0c223f 100%);
+    color:var(--paper);
+    padding:3.2rem 2rem 2.4rem;
+    border-bottom:5px solid var(--brass);
+  }
+  .hero-inner{max-width:880px; margin:0 auto;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    font-size:0.75rem;
+    color:var(--brass-light);
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(1.9rem, 4.5vw, 2.8rem);
+    margin:0.4rem 0 0.3rem;
+    line-height:1.1;
+  }
+  .hero p{color:#cdd7e6; margin:0; font-size:0.98rem;}
+
+  main{max-width:880px; margin:0 auto; padding:2.4rem 1.6rem 4rem;}
+
+  /* TOC */
+  .toc{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:1.2rem 1.4rem;
+    margin-bottom:2rem;
+  }
+  .toc h4{
+    margin:0 0 0.6rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--brass);
+  }
+  .toc ol{margin:0; padding-left:1.2rem; columns:2; column-gap:1.5rem;}
+  .toc a{color:var(--navy); text-decoration:none; font-size:0.92rem;}
+  .toc a:hover{text-decoration:underline;}
+
+  /* SECTION */
+  section.topic{
+    margin-bottom:2rem;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:1.5rem 1.7rem;
+    scroll-margin-top:1rem;
+  }
+  section.topic h2{
+    font-family:'Fraunces', serif;
+    font-size:1.3rem;
+    margin:0 0 0.2rem;
+    color:var(--navy);
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+  }
+  section.topic h2 .num{
+    font-family:'IBM Plex Mono', monospace;
+    background:var(--navy);
+    color:var(--brass-light);
+    font-size:0.75rem;
+    padding:0.15rem 0.5rem;
+    border-radius:3px;
+  }
+  .src{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+    margin-bottom:0.9rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+  section.topic p{margin:0.4rem 0;}
+  ul.notes{margin:0.5rem 0; padding-left:1.3rem;}
+  ul.notes li{margin-bottom:0.35rem;}
+  strong{color:var(--navy);}
+
+  .eq-box{
+    background:var(--navy);
+    color:#fdf6ea;
+    font-family:'IBM Plex Mono', monospace;
+    padding:0.8rem 1rem;
+    border-radius:4px;
+    margin:0.7rem 0;
+    overflow-x:auto;
+    font-size:0.93rem;
+  }
+  table.compare{
+    width:100%;
+    border-collapse:collapse;
+    margin:0.6rem 0;
+    font-size:0.9rem;
+  }
+  table.compare th, table.compare td{
+    border:1px solid var(--line);
+    padding:0.45rem 0.65rem;
+    text-align:left;
+  }
+  table.compare th{
+    background:var(--navy);
+    color:var(--paper);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    text-transform:uppercase;
+  }
+  table.compare tr:nth-child(even) td{background:var(--paper-2);}
+
+  .callout{
+    background:var(--paper-2);
+    border-left:3px solid var(--brass);
+    padding:0.7rem 1rem;
+    border-radius:0 4px 4px 0;
+    margin:0.7rem 0;
+    font-size:0.93rem;
+  }
+  .callout b{color:var(--brass);}
+
+  .exam-tip{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    background:var(--brass);
+    color:#fff;
+    padding:0.15rem 0.5rem;
+    border-radius:3px;
+    margin-top:0.5rem;
+    letter-spacing:0.03em;
+  }
+
+  footer{
+    text-align:center;
+    padding:2rem 1rem 3rem;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    border-top:1px solid var(--line);
+  }
+
+  @media (max-width:600px){
+    .toc ol{columns:1;}
+    section.topic{padding:1.2rem 1.1rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">ME 161 · Dr. Md. Ashiqur Rahman, BUET</div>
+    <h1>Steam Turbine — Class Notes</h1>
+    <p>Short, exam-ready summary covering Lecture 8 &amp; Lecture 10 in full.</p>
+  </div>
+</div>
+
+<main>
+
+  <div class="toc">
+    <h4>Contents</h4>
+    <ol>
+      <li><a href="#t1">What is a Steam Turbine</a></li>
+      <li><a href="#t2">Two Functions of a Turbine</a></li>
+      <li><a href="#t3">Real Plant Layout &amp; Reheat Cycle</a></li>
+      <li><a href="#t4">Classification of Turbines</a></li>
+      <li><a href="#t5">Pressure Heads</a></li>
+      <li><a href="#t6">Bernoulli's Equation</a></li>
+      <li><a href="#t7">Impulse Turbine</a></li>
+      <li><a href="#t8">Pelton Wheel</a></li>
+      <li><a href="#t9">Reaction Turbine</a></li>
+      <li><a href="#t10">Impulse vs Reaction — Comparison</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <section class="topic" id="t1">
+    <h2><span class="num">01</span> What is a Steam Turbine</h2>
+    <div class="src">Lecture 8, p.1–2</div>
+    <p><strong>Definition:</strong> A mechanical device that extracts thermal energy from pressurized steam and converts it into rotary motion.</p>
+    <ul class="notes">
+      <li>Rotary motion → ideal for driving an electrical generator.</li>
+      <li><strong>~80% of world electricity</strong> is generated using steam turbines.</li>
+    </ul>
+    <span class="exam-tip">EXAM FACT: 80%</span>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="t2">
+    <h2><span class="num">02</span> Two Functions of a Turbine</h2>
+    <div class="src">Lecture 8, p.3</div>
+    <p>A steam turbine uses steam as working fluid and does two jobs:</p>
+    <ul class="notes">
+      <li><strong>(a) Nozzle:</strong> Pressure energy → Kinetic energy (steam expands through nozzles).</li>
+      <li><strong>(b) Moving blades:</strong> Kinetic energy (+ remaining pressure energy, if any) → Mechanical work.</li>
+    </ul>
+    <div class="eq-box">Steam (pressure energy) → [Nozzle] → Kinetic energy → [Moving blades] → Mechanical work</div>
+    <span class="exam-tip">CORE CONCEPT — everything else builds on this</span>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="t3">
+    <h2><span class="num">03</span> Real Plant Layout &amp; Reheat Cycle</h2>
+    <div class="src">Lecture 8, p.4–5</div>
+    <p>Practical turbines are staged on one shaft: <strong>HP turbine → LP turbine → Generator</strong> (simple layout), or in large plants:</p>
+    <div class="eq-box">Main header → Stop/Control valves → HP turbine → (steam sent to boiler reheater) → Reheat stop/Intercept valve → Crossover → IP turbine → LP turbine → Condenser</div>
+    <ul class="notes">
+      <li><strong>Feedwater heaters</strong> tap off steam along the way to preheat boiler feedwater (extraction).</li>
+      <li>This is called a <strong>reheat cycle</strong> — improves plant efficiency.</li>
+    </ul>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="t4">
+    <h2><span class="num">04</span> Classification of Turbines</h2>
+    <div class="src">Lecture 8, p.6</div>
+    <table class="compare">
+      <tr><th>Basis</th><th>Types</th></tr>
+      <tr><td>Energy principle</td><td>Impulse / Reaction</td></tr>
+      <tr><td>Flow direction</td><td>Axial (radial in, axial out) / Inward / Outward</td></tr>
+      <tr><td>Head available</td><td>High (250–1800 m) → Pelton<br>Medium (50–250 m) → Francis<br>Low (&lt;50 m) → Kaplan</td></tr>
+      <tr><td>Fluid used</td><td>Water (Pelton/Francis/Kaplan) / Gas / Steam</td></tr>
+    </table>
+    <span class="exam-tip">Common MCQ / short-answer table</span>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="t5">
+    <h2><span class="num">05</span> Pressure Heads</h2>
+    <div class="src">Lecture 8, p.7, 9</div>
+    <p><strong>Head</strong> relates a fluid's energy to the height of an equivalent static column of that fluid (unit: <strong>meters or feet</strong>, not Pa).</p>
+    <div class="eq-box">Kinetic energy = ½ m v²        Potential energy = m g h</div>
+    <ul class="notes">
+      <li><strong>Static fluid (zero velocity):</strong> p/(ρg) + z = H (pressure head + elevation head only)</li>
+      <li><strong>Flowing fluid:</strong> velocity head is added too — full Bernoulli form (see next section)</li>
+      <li><strong>Total head line</strong> includes velocity head; <strong>hydraulic grade line</strong> does not.</li>
+    </ul>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="t6">
+    <h2><span class="num">06</span> Bernoulli's Equation</h2>
+    <div class="src">Lecture 8, p.8</div>
+    <div class="eq-box">p/(ρg) + u²/(2g) + z = H = constant</div>
+    <table class="compare">
+      <tr><th>Term</th><th>Name</th><th>Meaning</th></tr>
+      <tr><td>p/(ρg)</td><td>Pressure head</td><td>height equivalent of pressure energy</td></tr>
+      <tr><td>u²/(2g)</td><td>Velocity head</td><td>height equivalent of kinetic energy</td></tr>
+      <tr><td>z</td><td>Potential head</td><td>elevation above datum</td></tr>
+      <tr><td>H</td><td>Total head</td><td>constant along ideal flow</td></tr>
+    </table>
+    <div class="eq-box">Between two points 1 &amp; 2:
+p₁/(ρg) + u₁²/(2g) + z₁ = p₂/(ρg) + u₂²/(2g) + z₂</div>
+    <span class="exam-tip">Write this exact equation in exam</span>
+  </section>
+
+  <!-- 7 -->
+  <section class="topic" id="t7">
+    <h2><span class="num">07</span> Impulse Turbine</h2>
+    <div class="src">Lecture 8, p.10–11 · Lecture 10, p.2–4</div>
+    <p>Steam from the boiler passes through <strong>fixed nozzles</strong> and strikes the <strong>moving blades</strong>. The impulse (push) of steam rotates the wheel → shaft power. Kinetic energy → mechanical energy.</p>
+    <ul class="notes">
+      <li>In the nozzle: velocity increases sharply, pressure drops sharply.</li>
+      <li>Across moving blades: <strong>pressure stays constant</strong>, velocity decreases gradually (KE → work). This is the defining feature of impulse turbines.</li>
+      <li>Force on the wheel comes from the <strong>change in direction/velocity</strong> of steam across the blade (momentum change).</li>
+      <li>Steam stays in contact with atmosphere continuously.</li>
+    </ul>
+    <div class="callout"><b>Key graph:</b> Pressure drops only in the nozzle; velocity rises in nozzle then falls across the blades toward condenser pressure.</div>
+    <span class="exam-tip">Pressure drop = NOZZLE ONLY</span>
+  </section>
+
+  <!-- 8 -->
+  <section class="topic" id="t8">
+    <h2><span class="num">08</span> Pelton Wheel</h2>
+    <div class="src">Lecture 8, p.12 · Lecture 10, p.5</div>
+    <p>Example of an impulse turbine (uses water as fluid).</p>
+    <ul class="notes">
+      <li>Wheel mounted on a shaft with <strong>buckets</strong> on its periphery.</li>
+      <li>Water impinges on buckets, transferring energy.</li>
+      <li>Water has <strong>only kinetic energy</strong> at this point (all pressure energy already converted in the nozzle).</li>
+      <li>Each bucket is shaped like a <strong>double hemispherical cup</strong>.</li>
+      <li>Used for <strong>high head: 150–2000 m</strong>.</li>
+    </ul>
+  </section>
+
+  <!-- 9 -->
+  <section class="topic" id="t9">
+    <h2><span class="num">09</span> Reaction Turbine</h2>
+    <div class="src">Lecture 10, p.6–8</div>
+    <p>Constructed of rows of <strong>fixed blades (stator)</strong> and <strong>moving blades (rotor)</strong>. The fixed blades themselves form convergent nozzles — the turbine uses the <strong>reaction force</strong> from steam accelerating through them.</p>
+    <ul class="notes">
+      <li>At entrance: only part of the energy → KE, the rest stays as pressure energy.</li>
+      <li>The fluid exerts a reaction force <strong>opposite</strong> to its flow direction (Newton's 3rd law).</li>
+    </ul>
+    <div class="callout">
+      <b>Key exam sentence:</b> "A pressure drop occurs across both the stator and the rotor, with steam accelerating through the stator and decelerating through the rotor, with no net change in steam velocity across the stage but with a decrease in both pressure and temperature."
+    </div>
+    <p><strong>Three forces driving a reaction turbine:</strong></p>
+    <ul class="notes">
+      <li>Reactive force from steam expanding through the nozzle-shaped moving-blade passages</li>
+      <li>Reactive force from the gas changing direction on the blades</li>
+      <li>Direct push/impulse of gas hitting the blades</li>
+    </ul>
+    <div class="callout"><b>Conclusion:</b> A reaction turbine moves primarily by reactive force, but also partly by direct impulse.</div>
+    <span class="exam-tip">Pressure drop = BOTH stator AND rotor</span>
+  </section>
+
+  <!-- 10 -->
+  <section class="topic" id="t10">
+    <h2><span class="num">10</span> Impulse vs Reaction — Comparison</h2>
+    <div class="src">Lecture 10, p.9 (final comparison slide)</div>
+    <table class="compare">
+      <tr><th>Feature</th><th>Impulse Turbine</th><th>Reaction Turbine</th></tr>
+      <tr><td>Nozzle</td><td>Fixed, separate from blades</td><td>Moving blades themselves act as nozzles</td></tr>
+      <tr><td>Where pressure drops</td><td>Only in the nozzle</td><td>In both stator and rotor</td></tr>
+      <tr><td>Pressure curve</td><td>Drops sharply, then flat</td><td>Drops gradually and continuously</td></tr>
+      <tr><td>Velocity across blade</td><td>Falls sharply (KE → work)</td><td>Falls gradually, stage to stage</td></tr>
+      <tr><td>Driving force</td><td>Impulse (direct push) only</td><td>Mainly reaction + some impulse</td></tr>
+      <tr><td>Example</td><td>Pelton wheel</td><td>Parson's turbine</td></tr>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  ME 161 — Introduction to Mechanical Engineering · Steam Turbine Class Notes
+</footer>
+
+</body>
+</html>
