@@ -186,7 +186,7 @@
   <div class="hero-inner">
     <div class="eyebrow">ME 161 · Dr. Md. Ashiqur Rahman, BUET</div>
     <h1>Steam Turbine — Class Notes</h1>
-    <p>Short, exam-ready summary covering Lecture 8 &amp; Lecture 10 in full.</p>
+    <p>Short, exam-ready summary covering Lecture 8, Lecture 10 &amp; Lecture 11 in full.</p>
   </div>
 </div>
 
@@ -205,6 +205,15 @@
       <li><a href="#t8">Pelton Wheel</a></li>
       <li><a href="#t9">Reaction Turbine</a></li>
       <li><a href="#t10">Impulse vs Reaction — Comparison</a></li>
+      <li><a href="#t11">Velocity Diagram of Impulse Turbine</a></li>
+      <li><a href="#t12">Compounding of Impulse Turbine</a></li>
+      <li><a href="#t13">Pressure-Compounding (Rateau)</a></li>
+      <li><a href="#t14">Velocity-Compounding (Curtis)</a></li>
+      <li><a href="#t15">Pressure-Velocity Compounding</a></li>
+      <li><a href="#t16">Reaction Turbine — Parson's</a></li>
+      <li><a href="#t17">Governing of Steam Turbine</a></li>
+      <li><a href="#t18">Steam Turbine vs Gas Turbine</a></li>
+      <li><a href="#t19">Homework</a></li>
     </ol>
   </div>
 
@@ -355,10 +364,129 @@ p₁/(ρg) + u₁²/(2g) + z₁ = p₂/(ρg) + u₂²/(2g) + z₂</div>
     </table>
   </section>
 
+  <!-- 11 -->
+  <section class="topic" id="t11">
+    <h2><span class="num">11</span> Velocity Diagram of Impulse Turbine</h2>
+    <div class="src">Lecture 11, p.1–3</div>
+    <p>The single-stage impulse turbine is also called the <strong>de Laval turbine</strong>.</p>
+    <p>The velocity diagram shows how steam velocity changes as it crosses the moving blade. Key terms (all angles measured with respect to the tangential/blade-speed direction, <strong>U</strong>):</p>
+    <table class="compare">
+      <tr><th>Symbol</th><th>Meaning</th></tr>
+      <tr><td>V₁, V₂</td><td>Inlet and outlet <strong>absolute</strong> velocity</td></tr>
+      <tr><td>Vr₁, Vr₂</td><td>Inlet and outlet <strong>relative</strong> velocity (relative to the rotor blade)</td></tr>
+      <tr><td>U</td><td>Mean blade speed</td></tr>
+      <tr><td>α₁, α₂</td><td>Nozzle angle (inlet) and absolute fluid angle at outlet</td></tr>
+      <tr><td>β₁, β₂</td><td>Inlet and outlet blade angles</td></tr>
+      <tr><td>Vf₁, Vf₂</td><td>Axial component of velocity at inlet/outlet</td></tr>
+      <tr><td>Vw₁, Vw₂</td><td>Tangential (whirl) component of absolute velocity at inlet/outlet</td></tr>
+    </table>
+    <div class="callout"><b>ΔVw</b> (change in whirl velocity, Vw₁ − (−Vw₂) or Vw₁+Vw₂ depending on direction) is what generates the driving force on the blade — this is the quantity used in force/power calculations.</div>
+    <span class="exam-tip">Learn this diagram — very likely to be asked to draw/label</span>
+  </section>
+
+  <!-- 12 -->
+  <section class="topic" id="t12">
+    <h2><span class="num">12</span> Compounding of Impulse Turbine</h2>
+    <div class="src">Lecture 11, p.5</div>
+    <p>If all the steam's high velocity is absorbed by just <strong>one row</strong> of moving blades, the rotor would need to spin at about <strong>30,000 rpm</strong> — far too high for practical use (excess centrifugal force → mechanical failure).</p>
+    <p>To fix this, more than one set of nozzles and rotors are used in series, keyed to the same shaft, so pressure or velocity is absorbed gradually in stages. This is called <strong>compounding (staging)</strong>.</p>
+    <ul class="notes">
+      <li><strong>Velocity compounding</strong> — also called <strong>Curtis staging</strong></li>
+      <li><strong>Pressure compounding</strong> — also called <strong>Rateau staging</strong></li>
+    </ul>
+    <div class="callout">Either method (or both combined) reduces the impractically high rotational speed of a single-stage turbine.</div>
+    <span class="exam-tip">EXAM FACT: single stage → ~30,000 rpm (too high)</span>
+  </section>
+
+  <!-- 13 -->
+  <section class="topic" id="t13">
+    <h2><span class="num">13</span> Pressure-Compounding (Rateau Turbine)</h2>
+    <div class="src">Lecture 11, p.6</div>
+    <ul class="notes">
+      <li>The total enthalpy drop through the nozzles is divided (roughly equally) among <strong>many single-stage impulse turbines in series</strong> — this is called a <strong>Rateau turbine</strong>.</li>
+      <li>Inlet steam velocity to each stage is essentially equal.</li>
+      <li>Pressure drop happens across <strong>more than one row of nozzles</strong>; kinetic energy gained after each nozzle is kept limited.</li>
+      <li>Usually <strong>convergent nozzles</strong> are used.</li>
+    </ul>
+    <div class="callout"><b>Pattern:</b> N–M–N–M–N–M... (Nozzle, Moving blade, repeated) — pressure drops step-by-step at each nozzle row, then stays constant across each moving-blade row.</div>
+  </section>
+
+  <!-- 14 -->
+  <section class="topic" id="t14">
+    <h2><span class="num">14</span> Velocity-Compounding (Curtis Stage)</h2>
+    <div class="src">Lecture 11, p.7</div>
+    <ul class="notes">
+      <li>The <strong>Curtis stage</strong> turbine has one stage of nozzles (like the single-stage turbine), followed by <strong>two or more rows of moving blades</strong> instead of one.</li>
+      <li>These moving-blade rows are separated by a row of <strong>fixed blades</strong> attached to the stator — their job is to redirect steam from the first row of moving blades to the second row.</li>
+      <li><strong>Total pressure drop occurs only in the nozzle</strong> — so pressure stays constant across all three blade rows (moving, fixed, moving).</li>
+      <li>Velocity is absorbed in <strong>two stages</strong>. In the fixed (static) blade row, <strong>both pressure and velocity stay constant</strong> — fixed blades here only redirect flow. Fixed blades are also called <strong>guide vanes</strong>.</li>
+    </ul>
+    <div class="callout"><b>Pattern:</b> N–M–F–M (Nozzle, Moving, Fixed/guide vane, Moving) — all pressure drop in the nozzle; velocity drops gradually across the two moving rows.</div>
+    <span class="exam-tip">Rateau = pressure staged; Curtis = velocity staged — don't mix these up</span>
+  </section>
+
+  <!-- 15 -->
+  <section class="topic" id="t15">
+    <h2><span class="num">15</span> Combined Pressure-Velocity Compounding</h2>
+    <div class="src">Lecture 11, p.8</div>
+    <ul class="notes">
+      <li>In velocity compounding, the <strong>total enthalpy drop converts to kinetic energy in a single stage</strong>, but that kinetic energy converts to mechanical energy across <strong>many blade rows</strong>. Fixed blades simply redirect steam to the next row.</li>
+      <li>A <strong>series of velocity-compounded impulse stages</strong> (i.e., several Curtis stages placed one after another) is called a <strong>pressure-velocity compounded turbine</strong>.</li>
+    </ul>
+  </section>
+
+  <!-- 16 -->
+  <section class="topic" id="t16">
+    <h2><span class="num">16</span> Reaction Turbine — Parson's Turbine</h2>
+    <div class="src">Lecture 11, p.9</div>
+    <div class="callout"><b>Combined impulse-reaction turbines are known as <em>Parson's reaction turbine</em>.</b></div>
+    <ul class="notes">
+      <li>Moving blades of a reaction turbine differ from impulse turbine blades: they are <strong>not symmetrical</strong>. Because they act partly as nozzles, their shape resembles the fixed blades, but curved in the <strong>opposite direction</strong>.</li>
+      <li><strong>Pressure continuously drops through all rows of blades</strong> — both fixed and moving (unlike impulse, where pressure drops only in the nozzle).</li>
+      <li>The absolute steam velocity <strong>changes within each stage and repeats from stage to stage</strong> (rises then falls, repeatedly, across F-M-F-M... rows).</li>
+    </ul>
+    <span class="exam-tip">Reaction blades ≠ symmetrical; impulse blades = symmetrical bucket shape</span>
+  </section>
+
+  <!-- 17 -->
+  <section class="topic" id="t17">
+    <h2><span class="num">17</span> Governing of Steam Turbine</h2>
+    <div class="src">Lecture 11, p.10</div>
+    <p>Governing = the method used to regulate steam supply to the turbine, needed to <strong>keep turbine speed constant regardless of load</strong>. Turbine performance depends heavily on the governing method used.</p>
+    <p><strong>Common governing methods:</strong></p>
+    <ul class="notes">
+      <li><strong>Throttle governing</strong> — steam flow is throttled (restricted) via a valve before entering the turbine</li>
+      <li><strong>Nozzle controlled governing</strong> — different sets of nozzles are opened/closed by valves to control steam admission</li>
+      <li>Combined throttle-nozzle governing</li>
+      <li>By-pass governing</li>
+    </ul>
+    <div class="callout">Throttle governing uses a <strong>stop valve + throttling control valves</strong> on a single steam path. Nozzle controlled governing uses <strong>multiple nozzle sets</strong> (1st, 2nd, 3rd...) fed through separate valves, opened as needed for load.</div>
+  </section>
+
+  <!-- 18 -->
+  <section class="topic" id="t18">
+    <h2><span class="num">18</span> Steam Turbine — Advantages over Gas Turbine</h2>
+    <div class="src">Lecture 11, p.11</div>
+    <ul class="notes">
+      <li>Steam turbine works on the <strong>Rankine cycle</strong>, with efficiency close to a Carnot cycle. Gas turbine works on the <strong>Brayton cycle</strong>, with efficiency much lower than Carnot cycle between the same temperature limits.</li>
+      <li>At <strong>part load</strong>, steam turbine efficiency doesn't drop much; gas turbine part-load efficiency drops significantly.</li>
+      <li>Blade material cost is considerably <strong>less</strong> for steam turbines compared to gas turbines.</li>
+      <li>Load control is <strong>easier</strong> for steam turbines — usually done via throttle governing or governors.</li>
+    </ul>
+    <span class="exam-tip">4 advantages: cycle efficiency, part-load efficiency, blade cost, easier load control</span>
+  </section>
+
+  <!-- 19 -->
+  <section class="topic" id="t19">
+    <h2><span class="num">19</span> Homework (from slides)</h2>
+    <div class="src">Lecture 11, final slide</div>
+    <div class="callout"><b>Assigned task:</b> Write the differences between impulse and reaction turbine. (Use the comparison table in Section 10 above as your answer base — expand each row into full sentences.)</div>
+  </section>
+
 </main>
 
 <footer>
-  ME 161 — Introduction to Mechanical Engineering · Steam Turbine Class Notes
+  ME 161 — Introduction to Mechanical Engineering · Steam Turbine Class Notes (Lectures 8, 10 &amp; 11)
 </footer>
 
 </body>
