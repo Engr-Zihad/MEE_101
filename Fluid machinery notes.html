@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluid Machinery — Hand Note | ME 161</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS — Blueprint / Technical Drafting System
+   Palette: deep drafting-table blue, aged paper cream, oxide-red
+   annotation, brass/verdigris accents pulled from the pump casings
+   in the source slides themselves.
+   ============================================================ */
+:root{
+  --ink-navy:      #0b2545;
+  --ink-navy-2:    #13315c;
+  --blueprint:     #0e3a5c;
+  --blueprint-line:#2f6690;
+  --paper:         #f6f1e4;
+  --paper-2:       #efe6d1;
+  --paper-line:    #d8cba9;
+  --oxide:         #b5471b;
+  --oxide-2:       #8f3413;
+  --brass:         #a9862f;
+  --verdigris:     #4b7d72;
+  --ink-soft:      #3b4a5a;
+  --white-cool:    #fbf9f2;
+  --shadow:        rgba(11,37,69,0.18);
+
+  --font-display: 'Fraunces', 'Noto Serif Bengali', serif;
+  --font-body-en: 'Space Grotesk', sans-serif;
+  --font-body-bn: 'Noto Sans Bengali', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --radius-l: 22px;
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:
+    linear-gradient(var(--paper),var(--paper)),
+    repeating-linear-gradient(0deg, transparent 0 38px, rgba(11,37,69,0.035) 38px 39px),
+    repeating-linear-gradient(90deg, transparent 0 38px, rgba(11,37,69,0.035) 38px 39px);
+  color:var(--ink-navy);
+  font-family:var(--font-body-bn), var(--font-body-en);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{ background:var(--oxide); color:var(--white-cool); }
+
+.bn{ font-family:var(--font-body-bn), sans-serif; }
+.en{ font-family:var(--font-body-en), sans-serif; }
+.mono{ font-family:var(--font-mono), monospace; letter-spacing:0.02em; }
+
+a{ color:var(--oxide); }
+
+/* ============================================================
+   SIGNATURE ELEMENT: the "instrument gauge" progress ring that
+   tracks reading progress, styled like a pressure gauge on the
+   pump casing in the source images — this is the one memorable
+   recurring motif tying every section back to the subject.
+   ============================================================ */
+#gauge{
+  position:fixed;
+  top:22px; right:22px;
+  width:64px; height:64px;
+  z-index:500;
+  cursor:pointer;
+}
+#gauge svg{ width:100%; height:100%; transform:rotate(-90deg); }
+#gauge circle.track{ fill:none; stroke:var(--paper-line); stroke-width:5; }
+#gauge circle.fill{ fill:none; stroke:var(--oxide); stroke-width:5; stroke-linecap:round; transition:stroke-dashoffset .15s linear; }
+#gauge .needle-cap{ fill:var(--ink-navy); }
+#gauge-label{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-size:10px; font-weight:600; color:var(--ink-navy);
+}
+@media (max-width: 720px){ #gauge{ width:46px; height:46px; top:12px; right:12px; } #gauge-label{ font-size:8px; } }
+
+/* ============================================================
+   TOPBAR / TITLE BLOCK — modeled after an engineering drawing's
+   title block (bottom-right stamp on real blueprints, brought
+   to the top here as a masthead)
+   ============================================================ */
+.titleblock{
+  border-bottom:3px solid var(--ink-navy);
+  background:
+    linear-gradient(180deg, var(--white-cool), var(--paper));
+  padding:26px clamp(16px,4vw,56px) 18px;
+  position:relative;
+}
+.titleblock::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-7px; height:3px;
+  background:repeating-linear-gradient(90deg, var(--ink-navy) 0 14px, transparent 14px 22px);
+}
+.tb-row{
+  display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:18px;
+}
+.tb-eyebrow{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--blueprint-line); font-weight:600; margin:0 0 8px;
+}
+.tb-title{
+  font-family:var(--font-display); font-weight:900; font-style:normal;
+  font-size:clamp(30px, 5vw, 52px); line-height:1.02; margin:0; color:var(--ink-navy);
+}
+.tb-title .accent{ color:var(--oxide); font-style:italic; font-weight:700; }
+.tb-sub{
+  margin:10px 0 0; font-size:15px; color:var(--ink-soft); max-width:60ch;
+}
+.tb-stamp{
+  border:2px solid var(--ink-navy); border-radius:var(--radius-s);
+  padding:10px 16px; text-align:right; background:var(--white-cool);
+  font-family:var(--font-mono); font-size:11px; color:var(--ink-soft); line-height:1.7;
+  min-width:190px;
+}
+.tb-stamp b{ color:var(--ink-navy); font-size:12px; }
+.tb-stamp .stamp-red{ color:var(--oxide); font-weight:700; }
+
+/* ============================================================
+   NAV — pipe-run style connector strip
+   ============================================================ */
+nav.pipeline{
+  position:sticky; top:0; z-index:400;
+  background:var(--ink-navy);
+  border-bottom:3px solid var(--oxide);
+  overflow-x:auto;
+  scrollbar-width:thin;
+}
+nav.pipeline::-webkit-scrollbar{ height:5px; }
+nav.pipeline::-webkit-scrollbar-thumb{ background:var(--blueprint-line); }
+.pipe-track{
+  display:flex; align-items:stretch; min-width:max-content;
+  padding:0 clamp(10px,3vw,40px);
+}
+.pipe-node{
+  display:flex; align-items:center; gap:8px;
+  padding:13px 16px;
+  color:#c9d8ea; text-decoration:none;
+  font-family:var(--font-mono); font-size:12px; font-weight:600; white-space:nowrap;
+  border-right:1px solid rgba(255,255,255,0.12);
+  transition:background .18s, color .18s;
+  position:relative;
+}
+.pipe-node .num{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:18px; height:18px; border-radius:50%; border:1.5px solid var(--brass);
+  color:var(--brass); font-size:9.5px;
+}
+.pipe-node:hover{ background:var(--ink-navy-2); color:#fff; }
+.pipe-node.active{ background:var(--oxide); color:#fff; }
+.pipe-node.active .num{ border-color:#fff; color:#fff; }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+main{ max-width:1180px; margin:0 auto; padding:0 clamp(14px,4vw,56px) 120px; }
+
+.section{
+  padding-top:56px; scroll-margin-top:64px;
+}
+.section-head{
+  display:flex; align-items:baseline; gap:16px; margin-bottom:6px;
+  border-bottom:2px solid var(--ink-navy); padding-bottom:10px;
+}
+.section-index{
+  font-family:var(--font-mono); font-size:13px; color:var(--oxide); font-weight:700;
+  border:1.5px solid var(--oxide); border-radius:50%;
+  width:30px; height:30px; display:flex; align-items:center; justify-content:center; flex:none;
+}
+.section-title{
+  font-family:var(--font-display); font-weight:800; font-size:clamp(22px,3.4vw,32px); margin:0;
+  color:var(--ink-navy);
+}
+.section-title .bn-part{ font-weight:700; }
+.section-kicker{
+  font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.12em;
+  color:var(--blueprint-line); margin:14px 0 22px;
+}
+
+/* Dual-language explanation card */
+.dual{
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  border:1.5px solid var(--ink-navy); border-radius:var(--radius-m); overflow:hidden;
+  margin:18px 0 26px; background:var(--white-cool);
+  box-shadow:4px 4px 0 var(--shadow);
+}
+@media (max-width:760px){ .dual{ grid-template-columns:1fr; } }
+.dual > div{ padding:20px 22px; }
+.dual .bn-col{
+  background:linear-gradient(180deg, #fbf6e8, #f6efdb);
+  border-right:1.5px dashed var(--paper-line);
+}
+@media (max-width:760px){ .dual .bn-col{ border-right:none; border-bottom:1.5px dashed var(--paper-line); } }
+.dual .en-col{ background:var(--white-cool); }
+.dual-label{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--brass); font-weight:700; margin:0 0 9px; display:flex; align-items:center; gap:6px;
+}
+.dual-label::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--brass); }
+.dual p{ margin:0 0 10px; font-size:15px; color:var(--ink-navy-2); }
+.dual p:last-child{ margin-bottom:0; }
+.dual .bn-col p{ font-family:var(--font-body-bn); font-size:15.5px; }
+
+/* Long-form vs Short-trick pairing block */
+.lf-sf{
+  display:grid; grid-template-columns:1.35fr 1fr; gap:16px; margin:22px 0;
+}
+@media (max-width:820px){ .lf-sf{ grid-template-columns:1fr; } }
+.card{
+  border-radius:var(--radius-m); padding:20px 22px; position:relative;
+}
+.card-longform{
+  background:var(--white-cool); border:1.5px solid var(--blueprint-line);
+  border-left:5px solid var(--blueprint);
+}
+.card-shortcut{
+  background:#fbf3e9; border:1.5px solid var(--brass);
+  border-left:5px solid var(--oxide);
+}
+.card-head{
+  display:flex; align-items:center; gap:9px; margin:0 0 12px;
+  font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.1em; font-weight:700;
+}
+.card-longform .card-head{ color:var(--blueprint); }
+.card-shortcut .card-head{ color:var(--oxide-2); }
+.card-head .icon{ width:22px; height:22px; flex:none; }
+.card ul{ margin:0; padding-left:20px; }
+.card li{ margin-bottom:7px; font-size:14.5px; }
+.card li:last-child{ margin-bottom:0; }
+.card p{ font-size:14.5px; margin:0 0 8px; }
+.card p:last-child{ margin-bottom:0; }
+.trick-tag{
+  display:inline-block; background:var(--oxide); color:#fff; font-family:var(--font-mono);
+  font-size:9.5px; padding:2px 8px; border-radius:20px; margin-bottom:8px; letter-spacing:0.04em;
+}
+
+/* Definition / key-term pill */
+.term{
+  font-weight:700; color:var(--oxide-2); font-family:var(--font-body-en);
+}
+
+/* Comparison table — drafting-table styled */
+.tbl-wrap{ overflow-x:auto; margin:20px 0; border-radius:var(--radius-m); border:1.5px solid var(--ink-navy); }
+table.spec{
+  width:100%; border-collapse:collapse; background:var(--white-cool); font-size:14px; min-width:560px;
+}
+table.spec caption{ display:none; }
+table.spec th{
+  background:var(--ink-navy); color:var(--paper); text-align:left; padding:11px 14px;
+  font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.06em; font-weight:600;
+}
+table.spec td{ padding:11px 14px; border-top:1px solid var(--paper-line); vertical-align:top; }
+table.spec tr:nth-child(even) td{ background:#f9f4e6; }
+table.spec td.hl{ color:var(--oxide-2); font-weight:700; }
+
+/* Process flow (priming, cavitation cycle etc) - pipe-connector steps */
+.flow{
+  display:flex; flex-wrap:wrap; gap:0; margin:22px 0; align-items:stretch;
+}
+.flow-step{
+  flex:1 1 180px; background:var(--white-cool); border:1.5px solid var(--ink-navy);
+  padding:16px 18px; position:relative; min-width:170px;
+}
+.flow-step + .flow-step{ border-left:none; }
+.flow-step:first-child{ border-radius:var(--radius-m) 0 0 var(--radius-m); }
+.flow-step:last-child{ border-radius:0 var(--radius-m) var(--radius-m) 0; }
+@media (max-width:700px){
+  .flow{ flex-direction:column; }
+  .flow-step{ border-left:1.5px solid var(--ink-navy) !important; border-top:none; }
+  .flow-step:first-child{ border-radius:var(--radius-m) var(--radius-m) 0 0; border-top:1.5px solid var(--ink-navy) !important; }
+  .flow-step:last-child{ border-radius:0 0 var(--radius-m) var(--radius-m); }
+}
+.flow-step::after{
+  content:"→";
+  position:absolute; right:-13px; top:50%; transform:translateY(-50%);
+  color:var(--oxide); font-weight:700; font-size:18px; z-index:5; background:var(--paper);
+  width:22px; text-align:center;
+}
+@media (max-width:700px){ .flow-step::after{ content:"↓"; right:auto; left:50%; top:auto; bottom:-16px; transform:translateX(-50%); } }
+.flow-step:last-child::after{ display:none; }
+.flow-num{
+  font-family:var(--font-mono); font-size:10px; color:var(--brass); font-weight:700;
+  border:1px solid var(--brass); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+  margin-bottom:9px;
+}
+.flow-step h4{ margin:0 0 6px; font-size:14.5px; font-family:var(--font-body-en); color:var(--ink-navy); }
+.flow-step p{ margin:0; font-size:13px; color:var(--ink-soft); }
+
+/* Diagram frame - for the illustrative SVGs */
+.diagram-frame{
+  border:1.5px solid var(--ink-navy); border-radius:var(--radius-m);
+  background:
+    var(--white-cool);
+  padding:18px; margin:22px 0;
+  position:relative;
+}
+.diagram-frame::before{
+  content:"FIG.";
+  position:absolute; top:-11px; left:16px; background:var(--oxide); color:#fff;
+  font-family:var(--font-mono); font-size:10px; padding:2px 9px; border-radius:3px; font-weight:700; letter-spacing:0.05em;
+}
+.diagram-cap{
+  text-align:center; font-family:var(--font-mono); font-size:12px; color:var(--ink-soft); margin-top:10px;
+}
+.diagram-cap b{ color:var(--ink-navy); }
+svg text{ font-family:var(--font-body-en), sans-serif; }
+svg .bn-svg{ font-family:var(--font-body-bn), sans-serif; }
+
+/* Callout / warning box (oxide-red like the annotation color in slides) */
+.callout{
+  border:1.5px solid var(--oxide); background:#fdf1ea; border-radius:var(--radius-m);
+  padding:16px 20px; margin:20px 0; display:flex; gap:14px; align-items:flex-start;
+}
+.callout .cicon{ flex:none; width:26px; height:26px; margin-top:1px; }
+.callout strong{ color:var(--oxide-2); display:block; margin-bottom:3px; font-size:13.5px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:0.05em; }
+.callout p{ margin:0; font-size:14.5px; color:var(--ink-navy-2); }
+
+.callout.verdi{ border-color:var(--verdigris); background:#eef5f2; }
+.callout.verdi strong{ color:#2e5950; }
+
+/* Formula block */
+.formula{
+  background:var(--ink-navy); color:var(--paper); border-radius:var(--radius-m);
+  padding:20px 24px; margin:20px 0; font-family:var(--font-mono); font-size:16px;
+  text-align:center; letter-spacing:0.02em; box-shadow:4px 4px 0 var(--shadow);
+  border:1.5px solid var(--ink-navy);
+}
+.formula .fx-label{ display:block; font-size:10.5px; color:#93b3d4; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px; }
+
+/* Check-understanding question box */
+.quiz{
+  border:2px dashed var(--brass); border-radius:var(--radius-m);
+  background:#fbf6e8; padding:18px 22px; margin:26px 0 10px;
+}
+.quiz-head{
+  display:flex; align-items:center; gap:9px; font-family:var(--font-mono); font-size:11.5px;
+  text-transform:uppercase; letter-spacing:0.08em; color:var(--brass); font-weight:700; margin:0 0 10px;
+}
+.quiz p.q{ margin:0 0 12px; font-weight:600; color:var(--ink-navy); font-size:15px; }
+.quiz-reveal summary{
+  cursor:pointer; color:var(--oxide-2); font-family:var(--font-mono); font-size:12px; font-weight:600;
+  list-style:none; display:inline-flex; align-items:center; gap:6px;
+}
+.quiz-reveal summary::-webkit-details-marker{ display:none; }
+.quiz-reveal summary::before{ content:"▸"; transition:transform .15s; }
+.quiz-reveal[open] summary::before{ transform:rotate(90deg); }
+.quiz-reveal .ans{
+  margin-top:10px; padding-top:10px; border-top:1px solid var(--paper-line); font-size:14.5px; color:var(--ink-navy-2);
+}
+
+/* Classification / type cards grid */
+.type-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:20px 0; }
+.type-card{
+  border:1.5px solid var(--ink-navy); border-radius:var(--radius-m); padding:18px; background:var(--white-cool);
+  transition:transform .15s, box-shadow .15s;
+}
+.type-card:hover{ transform:translateY(-3px); box-shadow:5px 5px 0 var(--shadow); }
+.type-card .tc-icon{ width:38px; height:38px; margin-bottom:10px; }
+.type-card h4{ margin:0 0 6px; font-family:var(--font-body-en); font-size:15.5px; color:var(--ink-navy); }
+.type-card p{ margin:0; font-size:13.5px; color:var(--ink-soft); }
+
+/* Prime/quote note style — like an inset engineer's marginal note */
+.margin-note{
+  border-left:4px solid var(--verdigris); padding:4px 0 4px 16px; margin:18px 0; font-size:14px; color:#345048;
+  font-style:italic;
+}
+
+/* Section divider ornament */
+.gasket{
+  height:22px; margin:8px 0 0; display:flex; align-items:center; justify-content:center; gap:6px; opacity:0.55;
+}
+.gasket span{ width:6px; height:6px; border-radius:50%; background:var(--brass); }
+.gasket span:nth-child(2){ width:9px; height:9px; }
+
+/* Footer */
+footer{
+  background:var(--ink-navy); color:#c9d8ea; padding:40px clamp(16px,4vw,56px) 34px; margin-top:60px;
+  border-top:5px solid var(--oxide);
+}
+footer .f-title{ font-family:var(--font-display); font-weight:800; font-size:20px; color:#fff; margin:0 0 8px; }
+footer p{ font-size:13.5px; margin:0 0 6px; color:#a9c0da; max-width:66ch; }
+footer .f-mono{ font-family:var(--font-mono); font-size:11px; color:#7f9cbb; margin-top:14px; }
+
+/* Print styles for the "hand note" use-case */
+@media print{
+  #gauge, nav.pipeline{ display:none !important; }
+  body{ background:#fff; }
+  .section{ page-break-inside:avoid; }
+  .titleblock{ border-bottom-color:#000; }
+}
+
+/* Responsive title stamp */
+@media (max-width:640px){
+  .tb-row{ flex-direction:column; align-items:flex-start; }
+  .tb-stamp{ align-self:stretch; text-align:left; }
+}
+
+/* Scroll reveal */
+.reveal{ opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease; }
+.reveal.in{ opacity:1; transform:translateY(0); }
+
+/* Table of contents intro card */
+.toc-intro{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:26px 0 10px;
+}
+.toc-item{
+  border:1.5px solid var(--ink-navy); border-radius:var(--radius-s); padding:12px 14px; text-decoration:none;
+  color:var(--ink-navy); background:var(--white-cool); display:flex; align-items:center; gap:10px; font-size:13.5px; font-weight:600;
+  transition:background .15s, color .15s;
+}
+.toc-item:hover{ background:var(--ink-navy); color:#fff; }
+.toc-item .tnum{
+  font-family:var(--font-mono); font-size:11px; border:1px solid currentColor; border-radius:50%;
+  width:20px; height:20px; display:flex; align-items:center; justify-content:center; flex:none;
+}
+
+/* Impeller mini-icon spin on hover, subtle nod to the rotating part */
+.spin-hover{ display:inline-block; transition:transform .6s ease; }
+.type-card:hover .spin-hover{ transform:rotate(70deg); }
+</style>
+</head>
+<body>
+
+<!-- Pressure-gauge style reading progress -->
+<div id="gauge" title="Reading progress · পড়ার অগ্রগতি">
+  <svg viewBox="0 0 64 64">
+    <circle class="track" cx="32" cy="32" r="27"></circle>
+    <circle class="fill" id="gaugeFill" cx="32" cy="32" r="27" stroke-dasharray="169.6" stroke-dashoffset="169.6"></circle>
+  </svg>
+  <div id="gauge-label">0%</div>
+</div>
+
+<!-- ============================ TITLE BLOCK ============================ -->
+<header class="titleblock">
+  <div class="tb-row">
+    <div>
+      <p class="tb-eyebrow">ME 161 · Introduction to Mechanical Engineering — Lecture 9 &amp; 10</p>
+      <h1 class="tb-title">Fluid Machinery <span class="accent">হাতে-লেখা নোট</span></h1>
+      <p class="tb-sub bn">পাম্প, সেন্ট্রিফিউগাল পাম্প, প্রাইমিং, ক্যাভিটেশন ও NPSH — বেসিক থেকে অ্যাডভান্সড পর্যন্ত সম্পূর্ণ বাংলা-ইংরেজি ব্যাখ্যা, একটি hand-note হিসেবে ব্যবহারের জন্য তৈরি।</p>
+    </div>
+    <div class="tb-stamp">
+      <div><b>DRAWN BY:</b> Claude — PhD Mentor</div>
+      <div><b>FOR:</b> Zihad · HSTU CSE</div>
+      <div><b>SHEET:</b> Fluid Machinery / 01</div>
+      <div class="stamp-red"><b>STATUS:</b> Exam-ready ✓</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ NAV / PIPELINE ============================ -->
+<nav class="pipeline" id="pipeline">
+  <div class="pipe-track">
+    <a class="pipe-node" href="#s0"><span class="num">·</span> Map / সূচি</a>
+    <a class="pipe-node" href="#s1"><span class="num">1</span> Fluid Machinery Intro</a>
+    <a class="pipe-node" href="#s2"><span class="num">2</span> Pump Definition &amp; Types</a>
+    <a class="pipe-node" href="#s3"><span class="num">3</span> Rotodynamic Pump</a>
+    <a class="pipe-node" href="#s4"><span class="num">4</span> Centrifugal Pump</a>
+    <a class="pipe-node" href="#s5"><span class="num">5</span> Components</a>
+    <a class="pipe-node" href="#s6"><span class="num">6</span> Priming</a>
+    <a class="pipe-node" href="#s7"><span class="num">7</span> Cavitation &amp; NPSH</a>
+    <a class="pipe-node" href="#s8"><span class="num">8</span> Series vs Parallel</a>
+    <a class="pipe-node" href="#s9"><span class="num">9</span> Exam Recap</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ============================ SECTION 0: MAP ============================ -->
+  <section class="section reveal" id="s0">
+    <div class="section-head">
+      <span class="section-index">·</span>
+      <h2 class="section-title">Quick Map <span class="bn-part bn">— এই নোটে কী কী আছে</span></h2>
+    </div>
+    <p class="section-kicker">Jump to any topic · যেকোনো টপিকে সরাসরি যান</p>
+    <div class="toc-intro">
+      <a class="toc-item" href="#s1"><span class="tnum">1</span> Fluid Machinery কী</a>
+      <a class="toc-item" href="#s2"><span class="tnum">2</span> Pump &amp; Fan/Blower/Compressor</a>
+      <a class="toc-item" href="#s3"><span class="tnum">3</span> Rotodynamic vs PDP</a>
+      <a class="toc-item" href="#s4"><span class="tnum">4</span> Centrifugal Pump Working</a>
+      <a class="toc-item" href="#s5"><span class="tnum">5</span> Impeller &amp; Casing</a>
+      <a class="toc-item" href="#s6"><span class="tnum">6</span> Priming ও Gas-bound</a>
+      <a class="toc-item" href="#s7"><span class="tnum">7</span> Cavitation ও NPSH</a>
+      <a class="toc-item" href="#s8"><span class="tnum">8</span> Series/Parallel Connection</a>
+      <a class="toc-item" href="#s9"><span class="tnum">9</span> Exam Recap Sheet</a>
+    </div>
+    <div class="margin-note bn">টিপ: প্রতিটা সেকশনে বাম পাশে detailed explanation (Bangla + English), আর ডান পাশে দ্রুত trick/shortcut দেওয়া আছে — পরীক্ষার আগের রাতে শুধু ডান পাশগুলো রিভিশন দিলেই চলবে।</div>
+  </section>
+
+  <!-- ============================ SECTION 1 ============================ -->
+  <section class="section reveal" id="s1">
+    <div class="section-head">
+      <span class="section-index">1</span>
+      <h2 class="section-title">What is Fluid Machinery? <span class="bn-part bn">— ফ্লুইড মেশিনারি কাকে বলে</span></h2>
+    </div>
+    <p class="section-kicker">Also called Turbo-Machinery</p>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা</p>
+        <p>যে মেশিনগুলো <span class="term">তরল পদার্থে (fluid) শক্তি সরবরাহ করে</span> — যেমন পাম্প, ফ্যান, ব্লোয়ার, কম্প্রেসার — অথবা <span class="term">তরল পদার্থ থেকে শক্তি নিয়ে নেয়</span> — যেমন টারবাইন — সেগুলোকে বলা হয় <b>Fluid Machinery</b>।</p>
+        <p>একে <b>Turbo-Machinery</b> ও বলা হয়, কারণ এদের মূল ঘূর্ণায়মান অংশ (rotor/impeller/blade) "টার্বো" আকৃতির হয়ে fluid-এর সাথে শক্তি বিনিময় করে।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation</p>
+        <p>Machines that either <span class="term">energize the fluid</span> (pump, fan, blower, compressor) or <span class="term">extract energy from the fluid</span> (turbines) are collectively called <b>Fluid Machinery</b>.</p>
+        <p>They're also known as <b>Turbo-Machinery</b> because energy exchange happens through a rotating element interacting continuously with the fluid stream.</p>
+      </div>
+    </div>
+
+    <div class="lf-sf">
+      <div class="card card-longform">
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Long-form / বিস্তারিত</p>
+        <ul>
+          <li><b>Energy-adding machines:</b> Pump (liquid), Fan/Blower/Compressor (gas) — mechanical energy → fluid এ transfer হয়।</li>
+          <li><b>Energy-extracting machines:</b> Turbine — fluid এর শক্তি নিয়ে shaft ঘুরিয়ে mechanical/electrical power তৈরি করে (যেমন hydro turbine, steam turbine)।</li>
+          <li>দুই দিক-ই একসাথে "Turbo-Machinery" পরিবারের সদস্য, কারণ মূলনীতি একই — <i>rotating element ↔ fluid</i> এর মধ্যে momentum ও energy exchange।</li>
+        </ul>
+      </div>
+      <div class="card card-shortcut">
+        <span class="trick-tag">SHORTCUT</span>
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Quick Trick</p>
+        <p class="mono" style="font-size:13px;">মনে রাখার উপায় — <b>"IN vs OUT"</b></p>
+        <ul>
+          <li>Energy <b>IN</b> → fluid → <b>Pump / Fan / Blower / Compressor</b></li>
+          <li>Energy <b>OUT</b> ← fluid ← <b>Turbine</b></li>
+        </ul>
+        <p style="margin-top:10px;">এক লাইনে: <i>"যেটা fluid-কে ধাক্কা দেয় সেটা pump-family, যেটা fluid থেকে ধাক্কা খায় সেটা turbine।"</i></p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ Check Yourself · নিজেকে যাচাই করো</p>
+      <p class="q">প্রশ্ন: একটি windmill (বায়ুকল) কি fluid machinery-র "energy adding" নাকি "energy extracting" ক্যাটাগরিতে পড়বে? কেন?</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">Energy extracting — কারণ windmill বাতাসের (fluid) গতিশক্তি নিয়ে নিজের blade ঘুরিয়ে mechanical শক্তি উৎপন্ন করে, ঠিক turbine-এর মতোই। এটা তাই turbine-family-র সদস্য, pump-family-র নয়।</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================ SECTION 2 ============================ -->
+  <section class="section reveal" id="s2">
+    <div class="section-head">
+      <span class="section-index">2</span>
+      <h2 class="section-title">Pump — Definition &amp; Gas-handling Terms <span class="bn-part bn">— পাম্পের সংজ্ঞা</span></h2>
+    </div>
+    <p class="section-kicker">Pump vs Fan vs Blower vs Compressor</p>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা</p>
+        <p><b>Pump</b> হলো এমন একটি মেশিন যা বাহ্যিক উৎস (motor/engine) থেকে শক্তি নিয়ে সেটা <span class="term">liquid</span>-এ transfer করে, যাতে liquid টি pipe/conduit দিয়ে প্রবাহিত হতে পারে।</p>
+        <p>Liquid পরিবহনকারী মেশিনকে সরাসরি "pump" বলা হয়। কিন্তু <span class="term">gas</span> পরিবহনের ক্ষেত্রে <b>pressure rise</b> কত হচ্ছে তার উপর ভিত্তি করে তিনটি আলাদা নাম ব্যবহার হয়।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation</p>
+        <p>A <b>pump</b> is a machine that transfers energy from an external source to a <span class="term">liquid</span> flowing through a conduit or pipe.</p>
+        <p>Machines delivering liquids are simply called pumps. For <span class="term">gases</span>, three different terms are used depending on the <b>pressure rise achieved</b>.</p>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="spec">
+        <thead><tr><th>Pressure Rise</th><th>Term Used</th><th class="bn">উদাহরণ / Example</th></tr></thead>
+        <tbody>
+          <tr><td>Very small — a few inches of water</td><td class="hl">Fan</td><td class="bn">সিলিং ফ্যান, exhaust fan</td></tr>
+          <tr><td>Up to 1 atm</td><td class="hl">Blower</td><td class="bn">industrial blower, HVAC blower</td></tr>
+          <tr><td>Above 1 atm</td><td class="hl">Compressor</td><td class="bn">এয়ার কম্প্রেসার, রেফ্রিজারেটর কম্প্রেসার</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lf-sf">
+      <div class="card card-longform">
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Long-form / বিস্তারিত</p>
+        <p>মূল পার্থক্যটা শুধু নামকরণে, কার্যপ্রণালী মূলত একই — mechanical energy কে hydraulic/pneumatic energy-তে রূপান্তর। তিনটি জীবন্ত উদাহরণ দেখলে পুরো concept পরিষ্কার হয়ে যায়:</p>
+        <ul>
+          <li><b>Tire pump (reciprocating):</b> piston-এর push দিয়ে বাতাস ভরে — mechanical → hydraulic/pneumatic energy রূপান্তরের সবচেয়ে সহজ উদাহরণ।</li>
+          <li><b>Human heart:</b> প্রকৃতির নিজস্ব centrifugal-এর মতো pump — রক্তকে (liquid) শরীরে সঞ্চালন করে।</li>
+          <li><b>Centrifugal pump:</b> industrial সবচেয়ে common pump — impeller ঘুরিয়ে liquid-কে উচ্চচাপে ঠেলে দেয়।</li>
+        </ul>
+      </div>
+      <div class="card card-shortcut">
+        <span class="trick-tag">SHORTCUT</span>
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Quick Trick — Mnemonic</p>
+        <p class="mono" style="font-size:13px;"><b>"F-B-C = Few, Below, Crosses"</b></p>
+        <ul>
+          <li><b>F</b>an → <b>F</b>ew inches of water</li>
+          <li><b>B</b>lower → <b>B</b>elow/up-to 1 atm</li>
+          <li><b>C</b>ompressor → <b>C</b>rosses 1 atm</li>
+        </ul>
+        <p style="margin-top:10px;">Exam এ MCQ আসলে শুধু pressure value দেখে এই তিন অক্ষর মনে করলেই উত্তর বেরিয়ে যাবে।</p>
+      </div>
+    </div>
+
+    <div class="diagram-frame">
+      <svg viewBox="0 0 900 190" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+        <line x1="60" y1="140" x2="840" y2="140" stroke="#0b2545" stroke-width="2"/>
+        <!-- axis ticks -->
+        <line x1="60" y1="135" x2="60" y2="145" stroke="#0b2545" stroke-width="2"/>
+        <line x1="330" y1="135" x2="330" y2="145" stroke="#0b2545" stroke-width="2"/>
+        <line x1="600" y1="135" x2="600" y2="145" stroke="#0b2545" stroke-width="2"/>
+        <line x1="820" y1="135" x2="820" y2="145" stroke="#0b2545" stroke-width="2"/>
+        <text x="60" y="160" font-size="12" fill="#3b4a5a">0</text>
+        <text x="310" y="160" font-size="12" fill="#3b4a5a">few in. H₂O</text>
+        <text x="585" y="160" font-size="12" fill="#3b4a5a">1 atm</text>
+        <text x="800" y="160" font-size="12" fill="#b5471b" font-weight="700">↑ higher</text>
+        <text x="440" y="182" font-size="12" fill="#2f6690" text-anchor="middle" font-weight="600">PRESSURE RISE →</text>
+
+        <!-- Fan zone -->
+        <rect x="60" y="60" width="270" height="60" fill="#4b7d72" opacity="0.16" rx="6"/>
+        <text x="195" y="94" font-size="15" fill="#2e5950" text-anchor="middle" font-weight="700">FAN</text>
+        <!-- Blower zone -->
+        <rect x="330" y="60" width="270" height="60" fill="#a9862f" opacity="0.18" rx="6"/>
+        <text x="465" y="94" font-size="15" fill="#7a5f22" text-anchor="middle" font-weight="700">BLOWER</text>
+        <!-- Compressor zone -->
+        <rect x="600" y="60" width="240" height="60" fill="#b5471b" opacity="0.16" rx="6"/>
+        <text x="720" y="94" font-size="15" fill="#8f3413" text-anchor="middle" font-weight="700">COMPRESSOR</text>
+      </svg>
+      <p class="diagram-cap">FIG. 2.1 — <b>Pressure-rise spectrum</b> যা Fan → Blower → Compressor কে আলাদা করে। বাম থেকে ডানে চাপ বাড়ছে।</p>
+    </div>
+  </section>
+
+  <!-- ============================ SECTION 3 ============================ -->
+  <section class="section reveal" id="s3">
+    <div class="section-head">
+      <span class="section-index">3</span>
+      <h2 class="section-title">Pump Classification <span class="bn-part bn">— পাম্পের শ্রেণিবিভাগ</span></h2>
+    </div>
+    <p class="section-kicker">Rotodynamic (Kinetic Displacement) vs Positive Displacement</p>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা</p>
+        <p>পাম্পিং মিডিয়াতে কীভাবে শক্তি transmit করা হচ্ছে, তার উপর ভিত্তি করে পাম্পকে <b>দুই মৌলিক ধরনে</b> ভাগ করা হয়:</p>
+        <p>১) <span class="term">Kinetic Displacement (Rotodynamic pump):</span> ঘূর্ণায়মান impeller-এর centrifugal force fluid-কে গতিশক্তি (kinetic energy) "impel" করে, suction থেকে discharge পর্যন্ত।</p>
+        <p>২) <span class="term">Positive Displacement (PDP):</span> piston-এর reciprocating motion অথবা meshing gear-এর squeezing action দিয়ে fluid-কে এক জায়গা থেকে আরেক জায়গায় "displace" করা হয়।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation</p>
+        <p>Pumps are divided into <b>two fundamental types</b> based on how they transmit energy to the pumped media:</p>
+        <p><span class="term">Kinetic Displacement (Rotodynamic pump):</span> centrifugal force of a rotating impeller "impels" kinetic energy to the fluid, moving it from suction (inlet) to discharge (outlet).</p>
+        <p><span class="term">Positive Displacement (PDP):</span> reciprocating action of pistons, or squeezing action of meshing gears, displaces the fluid from one area into another.</p>
+      </div>
+    </div>
+
+    <div class="type-grid">
+      <div class="type-card">
+        <svg class="tc-icon spin-hover" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+        <h4>Rotodynamic Pump</h4>
+        <p class="bn">Impeller ঘুরে kinetic energy তৈরি করে → Bernoulli's Principle দিয়ে pressure energy-তে রূপান্তরিত হয়।</p>
+      </div>
+      <div class="type-card">
+        <svg class="tc-icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.6"><rect x="4" y="9" width="4" height="8" rx="1"/><rect x="10" y="5" width="4" height="12" rx="1"/><rect x="16" y="11" width="4" height="6" rx="1"/></svg>
+        <h4>Positive Displacement</h4>
+        <p class="bn">Piston বা gear সরাসরি fluid-কে "ঠেলে" এক আধার থেকে আরেক আধারে নিয়ে যায় — mechanical squeeze।</p>
+      </div>
+      <div class="type-card">
+        <svg class="tc-icon" viewBox="0 0 24 24" fill="none" stroke="var(--verdigris)" stroke-width="1.6"><path d="M4 12a8 8 0 1 1 16 0"/><path d="M12 12 8 8"/></svg>
+        <h4><span class="bn">Centrifugal, Turbine, Submersible</span></h4>
+        <p>রোটোডাইনামিক পাম্পের প্রধান তিন উদাহরণ — সবাই একই মূলনীতি ব্যবহার করে।</p>
+      </div>
+    </div>
+
+    <div class="lf-sf">
+      <div class="card card-longform">
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Long-form / বিস্তারিত — Comparison</p>
+        <ul>
+          <li>Rotodynamic pump <b>higher, steadier flow rate</b> দেয় কিন্তু <b>high-viscosity liquid</b> handle করতে পারে না।</li>
+          <li>Rotodynamic pump সাধারণত <b>priming লাগে</b> — বাতাস দিয়ে ভরা থাকলে নিচের liquid নিজে থেকে টেনে তুলতে পারে না। PDP <b>self-priming</b>।</li>
+          <li><b>Flow rate vs pressure trade-off:</b> Rotodynamic — খুব বেশি flow rate (৩,০০,০০০ gal/min পর্যন্ত) কিন্তু কম pressure (কয়েক atm)। PDP — অনেক বেশি pressure (৩০০ atm পর্যন্ত) কিন্তু কম flow rate (১০০ gal/min)।</li>
+        </ul>
+      </div>
+      <div class="card card-shortcut">
+        <span class="trick-tag">SHORTCUT</span>
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Quick Trick</p>
+        <p><b>"Roto = Flow, PDP = Force"</b></p>
+        <p>Rotodynamic → high FLOW, low pressure (impeller ঘোরে, ছড়িয়ে দেয়)।<br>PDP → high PRESSURE, low flow (piston চেপে ধরে)।</p>
+        <p class="mono" style="font-size:12px; margin-top:8px;">Exam এ number দিলে: বড় gal/min → Rotodynamic; বড় atm → PDP।</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ Check Yourself · নিজেকে যাচাই করো</p>
+      <p class="q">একটি সাইকেলের tire pump (হাতে চাপ দেওয়া) কোন category-তে পড়বে — Rotodynamic নাকি Positive Displacement? Reasoning সহ বলো।</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">Positive Displacement — কারণ এখানে কোনো ঘূর্ণায়মান impeller নেই; বরং piston-এর reciprocating (সামনে-পেছনে) motion সরাসরি বাতাসকে চেপে সিলিন্ডার থেকে টায়ারে ঠেলে দেয়। এটা reciprocating pump-এর classic উদাহরণ।</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================ SECTION 4 ============================ -->
+  <section class="section reveal" id="s4">
+    <div class="section-head">
+      <span class="section-index">4</span>
+      <h2 class="section-title">Centrifugal Pump — Working Principle <span class="bn-part bn">— কার্যপ্রণালী</span></h2>
+    </div>
+    <p class="section-kicker">The most common rotodynamic pump</p>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা</p>
+        <p><b>Centrifugal pump</b> এমন এক rotodynamic pump যা একটি ঘূর্ণায়মান impeller ব্যবহার করে liquid-এর pressure ও flow rate বাড়ায়। এটি piping system-এ liquid চলাচলের জন্য সবচেয়ে বেশি ব্যবহৃত pump — সাধারণত <span class="term">বড় discharge, ছোট head</span>-এর জন্য উপযোগী।</p>
+        <p>Fluid, impeller-এর কেন্দ্রের কাছাকাছি একটি ছিদ্র দিয়ে ঢোকে যাকে বলে <span class="term">impeller eye</span>। impeller ঘোরার সাথে সাথে fluid ত্বরান্বিত হয় এবং radially বাইরের দিকে diffuser বা volute chamber-এ প্রবাহিত হয়, যেখান থেকে এটি downstream piping-এ বেরিয়ে যায়। volute chamber-এ impeller-এর বাড়ানো kinetic energy pressure energy-তে রূপান্তরিত হয়।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation</p>
+        <p>A <b>centrifugal pump</b> is a rotodynamic pump that uses a rotating impeller to increase the pressure and flow rate of a fluid. It's the most common pump for moving liquids through a piping system, typically used for <span class="term">large discharge with smaller heads</span>.</p>
+        <p>Fluid enters along/near the rotating axis through the <span class="term">impeller eye</span>, gets accelerated by impeller rotation, and flows radially outward into a diffuser or volute chamber — where kinetic energy is converted into pressure energy — before exiting into the downstream piping.</p>
+      </div>
+    </div>
+
+    <div class="diagram-frame">
+      <svg viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:520px; height:auto; display:block; margin:0 auto;">
+        <!-- Volute casing -->
+        <path d="M310 60 C 190 60 100 150 100 250 C 100 340 190 380 300 380 L 300 340 C 220 340 150 310 150 250 C 150 170 220 100 310 100 Z"
+              fill="#eaf1f6" stroke="#0b2545" stroke-width="3"/>
+        <!-- Discharge nozzle -->
+        <rect x="290" y="20" width="90" height="45" fill="#eaf1f6" stroke="#0b2545" stroke-width="3"/>
+        <path d="M310 60 L 380 60" stroke="#0b2545" stroke-width="3" fill="none"/>
+        <line x1="335" y1="70" x2="335" y2="40" stroke="#b5471b" stroke-width="3" marker-end="url(#arrowRed)"/>
+        <text x="345" y="35" font-size="13" fill="#8f3413" font-weight="700">DISCHARGE</text>
+
+        <!-- Suction pipe -->
+        <rect x="0" y="228" width="110" height="44" fill="#eaf1f6" stroke="#0b2545" stroke-width="3"/>
+        <line x1="30" y1="250" x2="70" y2="250" stroke="#2f6690" stroke-width="3" marker-end="url(#arrowBlue)"/>
+        <text x="8" y="292" font-size="12" fill="#2f6690" font-weight="700">SUCTION</text>
+
+        <!-- impeller circle -->
+        <circle cx="225" cy="250" r="78" fill="#fbf9f2" stroke="#0b2545" stroke-width="2.5"/>
+        <g id="impellerBlades" style="transform-origin:225px 250px;">
+          <path d="M225 250 Q 260 210 290 230" stroke="#4b7d72" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M225 250 Q 190 210 160 230" stroke="#4b7d72" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M225 250 Q 265 285 260 320" stroke="#4b7d72" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M225 250 Q 185 285 190 320" stroke="#4b7d72" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M225 250 Q 270 250 300 250" stroke="#4b7d72" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M225 250 Q 180 250 150 250" stroke="#4b7d72" stroke-width="6" fill="none" stroke-linecap="round"/>
+        </g>
+        <circle cx="225" cy="250" r="16" fill="#0b2545"/>
+        <circle cx="225" cy="250" r="7" fill="#f6f1e4"/>
+
+        <!-- rotation arrow -->
+        <path d="M 175 175 A 70 70 0 0 1 275 175" stroke="#b5471b" stroke-width="2.5" fill="none" marker-end="url(#arrowRed)"/>
+        <text x="200" y="160" font-size="11" fill="#8f3413" font-weight="600">rotation</text>
+
+        <!-- labels -->
+        <text x="225" y="255" font-size="10" fill="#f6f1e4" text-anchor="middle" font-weight="700"></text>
+        <line x1="225" y1="250" x2="225" y2="180" stroke="#a9862f" stroke-width="1.4" stroke-dasharray="3,3"/>
+        <text x="230" y="178" font-size="12" fill="#7a5f22" font-weight="600">impeller eye</text>
+
+        <text x="330" y="250" font-size="12" fill="#0b2545" font-weight="600">volute / casing</text>
+        <line x1="325" y1="248" x2="290" y2="230" stroke="#0b2545" stroke-width="1.2"/>
+
+        <defs>
+          <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#b5471b"/>
+          </marker>
+          <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#2f6690"/>
+          </marker>
+        </defs>
+      </svg>
+      <p class="diagram-cap">FIG. 4.1 — <b>Centrifugal pump cross-section:</b> fluid impeller eye দিয়ে ঢুকে impeller-এর ঘূর্ণনে ত্বরান্বিত হয়ে volute casing দিয়ে discharge nozzle-এ বের হয়ে যায়।</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <h4>Suction Entry</h4>
+        <p class="bn">Fluid impeller eye দিয়ে rotating axis-এর কাছাকাছি প্রবেশ করে।</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <h4>Acceleration</h4>
+        <p class="bn">Impeller ঘুরে fluid-এর velocity বাড়ায় — kinetic energy বৃদ্ধি পায়।</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <h4>Radial Flow</h4>
+        <p class="bn">Fluid radially বাইরের দিকে volute chamber-এ প্রবাহিত হয়।</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <h4>Energy Conversion</h4>
+        <p class="bn">Volute-এর আকৃতির কারণে kinetic energy → pressure energy।</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <h4>High-P Discharge</h4>
+        <p class="bn">উচ্চচাপের fluid delivery pipe দিয়ে বেরিয়ে যায়।</p>
+      </div>
+    </div>
+
+    <div class="lf-sf">
+      <div class="card card-longform">
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Long-form / বিস্তারিত — Working Principle</p>
+        <ul>
+          <li>Impeller একটি shaft-এ লাগানো থাকে যা bearing-এর উপর বসানো এবং motor-এর সাথে coupled।</li>
+          <li>Impeller-এর kinetic energy fluid-এ transmit হয় → velocity বাড়ে।</li>
+          <li>Volute casing-এর নিজস্ব আকৃতির কারণেই (expanding area scroll) fluid-এর kinetic energy pressure energy-তে রূপান্তরিত হয় — কোনো বাড়তি যন্ত্রপাতি ছাড়াই।</li>
+          <li>শেষে উচ্চচাপের fluid delivery pipe (discharge side) দিয়ে বেরিয়ে যায়।</li>
+        </ul>
+      </div>
+      <div class="card card-shortcut">
+        <span class="trick-tag">SHORTCUT</span>
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Quick Trick — 3 words</p>
+        <p class="mono" style="font-size:13px;"><b>"IN → SPIN → OUT"</b></p>
+        <p><b>IN</b> — fluid impeller eye দিয়ে ঢোকে।<br><b>SPIN</b> — impeller ঘুরে kinetic energy দেয়।<br><b>OUT</b> — volute pressure energy বানিয়ে বের করে দেয়।</p>
+        <p style="margin-top:8px;">Applications (এক শ্বাসে): উঁচুতে/দূরে fluid পাঠানো, pressurized device, hydraulic control, drainage/slurry, irrigation।</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ Check Yourself · নিজেকে যাচাই করো</p>
+      <p class="q">Centrifugal pump-এ energy conversion দুই ধাপে হয় — প্রথমে কোথায় kinetic energy বাড়ে, আর দ্বিতীয়ে কোথায় সেটা pressure energy-তে রূপান্তরিত হয়?</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">প্রথমে <b>impeller</b>-এ (rotation-এর কারণে velocity/kinetic energy বাড়ে), তারপর <b>volute casing (diffuser)</b>-এ (এর expanding shape-এর কারণে সেই kinetic energy pressure energy-তে রূপান্তরিত হয়)।</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================ SECTION 5 ============================ -->
+  <section class="section reveal" id="s5">
+    <div class="section-head">
+      <span class="section-index">5</span>
+      <h2 class="section-title">Components <span class="bn-part bn">— যন্ত্রাংশ: Impeller ও Casing</span></h2>
+    </div>
+    <p class="section-kicker">Impeller types &amp; Volute chamber physics</p>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা — Impeller</p>
+        <p>Centrifugal pump-এর ঘূর্ণায়মান অংশকে <b>impeller</b> বলে — এটি বাঁকা blade-যুক্ত একটি ঘূর্ণায়মান solid disk। Impeller তিন ধরনের হতে পারে: <span class="term">Open</span>, <span class="term">Semi-open</span>, ও <span class="term">Closed</span>। Blade-এর বাঁক তিন ধরনের হতে পারে: <b>Forward curved</b>, <b>Backward curved</b>, ও <b>Radial curved</b> — fluid-এর ধরন ও application অনুযায়ী নির্বাচিত হয়।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation — Casing</p>
+        <p><b>Casing (volute chamber)</b> একটি airtight passage যা impeller-কে ঘিরে রাখে এবং fluid-এর kinetic energy কে pressure energy-তে রূপান্তরিত করে। পানিকে উঁচু level-এ তোলার দুইটি উপায় আছে — (a) High pressure ও (b) High velocity। High velocity method অদক্ষ, কারণ friction বাড়ে velocity-এর <b>square</b>-এর সমানুপাতে। তাই High pressure method-ই দক্ষ (কম velocity, কম friction)।</p>
+      </div>
+    </div>
+
+    <div class="type-grid">
+      <div class="type-card">
+        <svg class="tc-icon spin-hover" viewBox="0 0 24 24" fill="none" stroke="var(--verdigris)" stroke-width="1.6"><path d="M12 12 L18 8 M12 12 L6 8 M12 12 L18 16 M12 12 L6 16" stroke-linecap="round"/><circle cx="12" cy="12" r="2.5"/></svg>
+        <h4>Open Impeller</h4>
+        <p class="bn">Blade গুলো খোলা, কোনো side-cover নেই — solids-heavy fluid-এর জন্য ভালো (কম clogging)।</p>
+      </div>
+      <div class="type-card">
+        <svg class="tc-icon spin-hover" viewBox="0 0 24 24" fill="none" stroke="var(--brass)" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 12 L17 9 M12 12 L7 9 M12 12 L17 15 M12 12 L7 15" stroke-linecap="round"/></svg>
+        <h4>Semi-Open Impeller</h4>
+        <p class="bn">এক পাশে backplate থাকে — moderate efficiency ও moderate solids-handling।</p>
+      </div>
+      <div class="type-card">
+        <svg class="tc-icon spin-hover" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg>
+        <h4>Closed Impeller</h4>
+        <p class="bn">দুই পাশে shroud (cover) থাকে — সর্বোচ্চ efficiency, clean fluid-এর জন্য standard।</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <svg class="cicon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide)" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
+      <div>
+        <strong>Physics Insight — কেন High Velocity Method অদক্ষ</strong>
+        <p class="bn">Friction loss ∝ velocity² — অর্থাৎ velocity দ্বিগুণ করলে friction loss চারগুণ হয়ে যায়। তাই বেশিরভাগ industrial pump design "high pressure, low velocity" নীতিতে চলে, যেখানে volute casing-এর কাজ হলো velocity কমিয়ে সেই শক্তিকে pressure-এ জমা করা।</p>
+      </div>
+    </div>
+
+    <div class="lf-sf">
+      <div class="card card-longform">
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Long-form / বিস্তারিত — Key Components List</p>
+        <ul>
+          <li><b>Stuffing Box &amp; Packing:</b> shaft যেখানে casing ভেদ করে বের হয়, সেখানে leakage রোধ করে।</li>
+          <li><b>Shaft &amp; Shaft Sleeve:</b> impeller-কে motor-এর সাথে সংযুক্ত করে, sleeve shaft-কে wear থেকে রক্ষা করে।</li>
+          <li><b>Vane:</b> impeller-এর blade, যেটা fluid-কে push করে।</li>
+          <li><b>Casing Wear Ring:</b> impeller ও casing-এর মধ্যে clearance বজায় রাখে, leakage কমায়।</li>
+          <li><b>Discharge Nozzle:</b> উচ্চচাপের fluid বের হওয়ার পথ।</li>
+        </ul>
+      </div>
+      <div class="card card-shortcut">
+        <span class="trick-tag">SHORTCUT</span>
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Quick Trick — Impeller Types</p>
+        <p class="mono" style="font-size:13px;"><b>"O-S-C = Open, Semi, Closed"</b></p>
+        <p>মনে রাখো: cover যত বেশি (Open → Semi → Closed), efficiency তত বেশি, কিন্তু clogging risk-ও তত বেশি (solids আটকে যায়)।</p>
+        <p style="margin-top:8px;">Friction rule: <span class="mono" style="font-size:12.5px;">Friction ∝ v²</span> — এই একটা formula মনে রাখলেই "high velocity কেন খারাপ" প্রশ্নের উত্তর দেওয়া যায়।</p>
+      </div>
+    </div>
+
+    <div class="formula">
+      <span class="fx-label">Friction–Velocity Relationship</span>
+      Friction&nbsp;Loss&nbsp;∝&nbsp;v²
+    </div>
+  </section>
+
+  <!-- ============================ SECTION 6 ============================ -->
+  <section class="section reveal" id="s6">
+    <div class="section-head">
+      <span class="section-index">6</span>
+      <h2 class="section-title">Priming <span class="bn-part bn">— প্রাইমিং ও Gas-bound সমস্যা</span></h2>
+    </div>
+    <p class="section-kicker">Why centrifugal pumps need to be filled with liquid first</p>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা</p>
+        <p>একটি পাম্পকে <b>primed</b> বলা হয় যখন suction pipe, casing, এবং delivery pipe-এ (valve পর্যন্ত) থাকা সব বাতাস বের করে দিয়ে সেই জায়গা pumped liquid দিয়ে ভরে ফেলা হয়।</p>
+        <p>বেশিরভাগ centrifugal pump <b>self-priming নয়</b> — অর্থাৎ pump চালু করার আগেই casing-কে liquid দিয়ে ভরতে হয়, নাহলে pump কাজ করবে না।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation</p>
+        <p>A pump is said to be <b>primed</b> when all air in the suction pipe, casing, and delivery pipe (up to the valve) is driven out and replaced by the liquid to be pumped.</p>
+        <p>If the casing fills with vapors/gases instead, the impeller becomes <span class="term">gas-bound</span> and incapable of pumping. To prevent this, most centrifugal pumps are located <b>below the level of the suction source</b>.</p>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <h4>Casing has air</h4>
+        <p class="bn">শুরুতে casing/pipe বাতাসে ভরা — pump কাজ করতে পারবে না।</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <h4>Fill with liquid</h4>
+        <p class="bn">Priming pump বা manual পদ্ধতিতে casing liquid দিয়ে ভরা হয়।</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <h4>Air driven out</h4>
+        <p class="bn">সব বাতাস বের হয়ে যায়, liquid জায়গা দখল করে।</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <h4>Pump = Primed</h4>
+        <p class="bn">এখন pump চালু করলে স্বাভাবিকভাবে কাজ করবে — Pumping mode।</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <svg class="cicon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide)" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
+      <div>
+        <strong>Gas-bound Impeller — সতর্কতা</strong>
+        <p class="bn">যদি pump casing বাতাস/গ্যাসে ভরা থাকে, impeller "gas-bound" হয়ে যায় এবং pumping করতে অক্ষম হয়ে পড়ে। এছাড়া fluid ছাড়া pump চালালে internal lubricated components ক্ষতিগ্রস্ত হওয়ার ঝুঁকি থাকে — তাই priming ও proper venting অত্যাবশ্যক।</p>
+      </div>
+    </div>
+
+    <div class="lf-sf">
+      <div class="card card-longform">
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Long-form / বিস্তারিত</p>
+        <ul>
+          <li>Priming নিশ্চিত করার আরেকটি উপায়: suction line-এ আরেকটি pump বসিয়ে pressurized liquid supply করা।</li>
+          <li>System startup-এর সময় pump priming করা এবং casing থেকে বাতাস venting করলে gas buildup প্রতিরোধ করা যায়।</li>
+          <li>কিছু system-এ float switch দ্বারা controlled একটি priming pump ব্যবহার করে automatic priming করা হয়।</li>
+        </ul>
+      </div>
+      <div class="card card-shortcut">
+        <span class="trick-tag">SHORTCUT</span>
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Quick Trick</p>
+        <p class="mono" style="font-size:13px;"><b>"NO AIR, NO STAY UPSTREAM"</b></p>
+        <p>Priming মানে: বাতাস বের, liquid ভেতরে। আর pump বসাও suction source-এর <b>নিচে</b>, নাহলে gas-bound হয়ে যাবে।</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ Check Yourself · নিজেকে যাচাই করো</p>
+      <p class="q">Priming না করে centrifugal pump চালু করলে কী দুইটি সমস্যা হতে পারে?</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">(১) Impeller গ্যাস-বাউন্ড হয়ে যাবে ও pumping করতে পারবে না, এবং (২) fluid ছাড়া চালানোর কারণে critical lubricated internal components ক্ষতিগ্রস্ত হওয়ার ঝুঁকি থাকবে।</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================ SECTION 7 ============================ -->
+  <section class="section reveal" id="s7">
+    <div class="section-head">
+      <span class="section-index">7</span>
+      <h2 class="section-title">Cavitation &amp; NPSH <span class="bn-part bn">— ক্যাভিটেশন ও এনপিএসএইচ (Advanced)</span></h2>
+    </div>
+    <p class="section-kicker">The most exam-critical advanced topic in this lecture</p>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা</p>
+        <p>Impeller-এর eye-তে যদি <b>suction pressure</b>, পাম্প করা fluid-এর <span class="term">vapor pressure</span>-এর নিচে নেমে যায়, তাহলে fluid ফুটতে (boil) শুরু করে।</p>
+        <p>Impeller eye-তে pressure drop-এর কারণে তৈরি হওয়া vapor bubble গুলো fluid-এর flow-এর সাথে impeller vane বরাবর ভেসে যায়। যখন এই bubble গুলো এমন এক region-এ ঢোকে যেখানে local pressure saturation pressure-এর চেয়ে বেশি (vane-এর আরও বাইরের দিকে), তখন সেই vapor bubble গুলো হঠাৎ ভেঙে পড়ে (collapse) — এই ঘটনাকেই বলা হয় <b>Cavitation</b>।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation</p>
+        <p>If <b>suction pressure</b> at the eye of the impeller falls below the <span class="term">vapor pressure</span> of the fluid being pumped, the fluid starts to boil.</p>
+        <p>Vapor bubbles formed near the impeller eye are swept along the impeller vanes by the flow. When they reach a region where local pressure exceeds saturation pressure (further out on the vane), the bubbles <b>abruptly collapse</b>. This phenomenon is <b>Cavitation</b>.</p>
+      </div>
+    </div>
+
+    <div class="diagram-frame">
+      <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:460px; height:auto; display:block; margin:0 auto;">
+        <circle cx="250" cy="170" r="120" fill="#fbf9f2" stroke="#0b2545" stroke-width="2"/>
+        <circle cx="250" cy="170" r="22" fill="#0b2545"/>
+        <path d="M250 170 Q 300 120 340 145" stroke="#2f6690" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M250 170 Q 200 120 160 145" stroke="#2f6690" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M250 170 Q 305 210 300 260" stroke="#2f6690" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M250 170 Q 195 210 200 260" stroke="#2f6690" stroke-width="7" fill="none" stroke-linecap="round"/>
+
+        <!-- vapor bubbles near eye -->
+        <circle cx="255" cy="150" r="5" fill="#a9862f" opacity="0.85"/>
+        <circle cx="265" cy="162" r="4" fill="#a9862f" opacity="0.7"/>
+        <circle cx="240" cy="155" r="3.5" fill="#a9862f" opacity="0.7"/>
+
+        <!-- collapsing bubbles further out -->
+        <g stroke="#b5471b" stroke-width="1.8" fill="none">
+          <path d="M330 130 l7 7 M337 130 l-7 7"/>
+          <path d="M350 155 l6 6 M356 155 l-6 6"/>
+          <path d="M318 108 l6 6 M324 108 l-6 6"/>
+        </g>
+        <text x="345" y="95" font-size="11" fill="#8f3413" font-weight="700">collapsing</text>
+        <text x="345" y="107" font-size="11" fill="#8f3413" font-weight="700">bubbles</text>
+        <line x1="335" y1="112" x2="325" y2="122" stroke="#8f3413" stroke-width="1"/>
+
+        <text x="150" y="95" font-size="11" fill="#7a5f22" font-weight="700">vapor bubbles</text>
+        <text x="150" y="107" font-size="11" fill="#7a5f22" font-weight="700">(low pressure zone)</text>
+        <line x1="200" y1="112" x2="240" y2="150" stroke="#7a5f22" stroke-width="1"/>
+
+        <path d="M 190 60 A 130 130 0 0 1 310 60" stroke="#0b2545" stroke-width="2" fill="none" marker-end="url(#arrowRed2)"/>
+        <text x="215" y="45" font-size="11" fill="#0b2545" font-weight="600">rotation</text>
+        <defs>
+          <marker id="arrowRed2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#0b2545"/>
+          </marker>
+        </defs>
+      </svg>
+      <p class="diagram-cap">FIG. 7.1 — <b>Cavitation cycle:</b> impeller eye-এর কাছে (low pressure) vapor bubble তৈরি হয়, vane বরাবর ভেসে গিয়ে (high pressure zone-এ) হঠাৎ collapse করে।</p>
+    </div>
+
+    <div class="lf-sf">
+      <div class="card card-longform">
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Effects of Cavitation / প্রভাব</p>
+        <ul>
+          <li>Noise, vibration তৈরি করে এবং damage ঘটায় (impeller-এ pitting দেখা যায় — উপরের ছবির মতো)।</li>
+          <li>Capacity-তে loss ঘটে।</li>
+          <li>Pump আগের মতো head (pressure) build করতে পারে না।</li>
+          <li>Output pressure fluctuate করে।</li>
+          <li>Pump-এর efficiency কমে যায়।</li>
+        </ul>
+      </div>
+      <div class="card card-shortcut">
+        <span class="trick-tag">SHORTCUT</span>
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Prevention — 6 Points, One Line</p>
+        <p class="mono" style="font-size:12.5px;"><b>"R-L-R-U-P-F"</b></p>
+        <ul style="font-size:13.5px;">
+          <li><b>R</b>aise liquid level in tank</li>
+          <li><b>L</b>ower fluid temperature</li>
+          <li><b>R</b>educe NPSH required</li>
+          <li><b>U</b>se larger impeller eye opening</li>
+          <li><b>P</b>ump should be airtight</li>
+          <li><b>F</b>riction losses decreased</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="gasket"><span></span><span></span><span></span></div>
+
+    <h3 class="bn" style="font-family:var(--font-display); font-size:20px; margin-top:26px; color:var(--ink-navy);">NPSH — Net Positive Suction Head</h3>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা</p>
+        <p>Centrifugal pump-এ cavitation এড়াতে pump-এর ভেতরে সব বিন্দুতেই fluid-এর pressure saturation pressure-এর উপরে রাখতে হয়। এই cavitation এড়ানোর জন্য প্রয়োজনীয় <b>ন্যূনতম positive head</b>-কেই বলা হয় <span class="term">NPSH (Net Positive Suction Head)</span>।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation</p>
+        <p><span class="term">NPSHA (Available):</span> difference between the pressure at pump suction and the saturation pressure for the liquid being pumped.</p>
+        <p><span class="term">NPSHR (Required):</span> minimum NPSH necessary to avoid cavitation, as determined by the pump's design.</p>
+      </div>
+    </div>
+
+    <div class="formula">
+      <span class="fx-label">The Golden Rule to Avoid Cavitation</span>
+      NPSH<sub>A</sub> &nbsp;&gt;&nbsp; NPSH<sub>R</sub>
+    </div>
+
+    <div class="callout verdi">
+      <svg class="cicon" viewBox="0 0 24 24" fill="none" stroke="var(--verdigris)" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+      <div>
+        <strong>Exam Golden Rule</strong>
+        <p class="bn">Cavitation এড়াতে সবসময় নিশ্চিত করতে হবে <b>NPSH Available &gt; NPSH Required</b>। MCQ বা short-question-এ এই একটা inequality মনে রাখলেই যথেষ্ট।</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ Check Yourself · নিজেকে যাচাই করো</p>
+      <p class="q">NPSHA এবং NPSHR-এর মধ্যে পার্থক্য কী, এবং cavitation এড়াতে এই দুইটার মধ্যে সম্পর্ক কেমন হতে হবে?</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">NPSHA হলো system দ্বারা <i>প্রদত্ত</i> head (suction pressure ও saturation pressure-এর পার্থক্য), আর NPSHR হলো pump design অনুযায়ী cavitation এড়াতে <i>প্রয়োজনীয়</i> ন্যূনতম head। Cavitation এড়াতে সবসময় NPSHA &gt; NPSHR শর্ত পূরণ করতে হবে — অর্থাৎ system যা দিতে পারে, তা pump-এর প্রয়োজনের চেয়ে বেশি হতে হবে।</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================ SECTION 8 ============================ -->
+  <section class="section reveal" id="s8">
+    <div class="section-head">
+      <span class="section-index">8</span>
+      <h2 class="section-title">Pump Connection <span class="bn-part bn">— Series vs Parallel</span></h2>
+    </div>
+    <p class="section-kicker">How multiple pumps combine flow rate and head</p>
+
+    <div class="dual">
+      <div class="bn-col">
+        <p class="dual-label">বাংলা ব্যাখ্যা — Parallel Connection</p>
+        <p>বেশি <span class="term">flow rate</span>-এর প্রয়োজন হলে parallel connection ব্যবহার হয়। এতে head/pressure individual pump-এর সমানই থাকে, কিন্তু flow rate হলো সব pump-এর যোগফল।</p>
+      </div>
+      <div class="en-col">
+        <p class="dual-label">English Explanation — Series Connection</p>
+        <p>For high <span class="term">head/pressure</span> requirements, series connection is used. Here, flow rate remains the same as an individual pump, but head/pressure is the summation of all pumps combined.</p>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="spec">
+        <thead><tr><th>Connection</th><th>Purpose</th><th>Head / Pressure</th><th>Flow Rate</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="hl">Parallel</td>
+            <td class="bn">উচ্চ flow rate প্রয়োজনে</td>
+            <td class="bn">Individual pump-এর সমান</td>
+            <td class="bn"><b>যোগফল</b> (sum of all pumps)</td>
+          </tr>
+          <tr>
+            <td class="hl">Series</td>
+            <td class="bn">উচ্চ head/pressure প্রয়োজনে</td>
+            <td class="bn"><b>যোগফল</b> (sum of all pumps)</td>
+            <td class="bn">Individual pump-এর সমান</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lf-sf">
+      <div class="card card-longform">
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--blueprint)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Long-form / বিস্তারিত</p>
+        <p><b>Parallel:</b> দুইটি pump পাশাপাশি একই suction ও একই discharge line-এ যুক্ত থাকে — প্রতিটা pump নিজের অংশ contribute করে মোট flow বাড়ায়, কিন্তু প্রতিটাকে একই head-এর বিরুদ্ধে কাজ করতে হয়।</p>
+        <p><b>Series:</b> এক pump-এর discharge আরেক pump-এর suction-এ যুক্ত থাকে — প্রথম pump যে head তৈরি করলো, দ্বিতীয় pump সেটার উপর আরও head যোগ করে। Flow rate পুরো path জুড়ে একই থাকে (mass conservation)।</p>
+      </div>
+      <div class="card card-shortcut">
+        <span class="trick-tag">SHORTCUT</span>
+        <p class="card-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide-2)" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Quick Trick</p>
+        <p class="mono" style="font-size:13px;"><b>"Parallel = Q adds, Series = H adds"</b></p>
+        <p>P for Parallel, P for "Plus Quantity" (flow বাড়ে)।<br>S for Series, S for "Stacking Head" (pressure বাড়ে)।</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ SECTION 9: EXAM RECAP ============================ -->
+  <section class="section reveal" id="s9">
+    <div class="section-head">
+      <span class="section-index">9</span>
+      <h2 class="section-title">Exam Recap Sheet <span class="bn-part bn">— এক নজরে সব</span></h2>
+    </div>
+    <p class="section-kicker">Last-night-before-exam revision — শুধু এই সেকশনটা দেখলেই যথেষ্ট</p>
+
+    <div class="tbl-wrap">
+      <table class="spec">
+        <thead><tr><th>Topic</th><th class="bn">এক লাইনে মূল কথা</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Fluid Machinery</td><td class="bn">Energy IN → Pump/Fan/Blower/Compressor; Energy OUT ← Turbine।</td></tr>
+          <tr><td class="hl">Pump vs Fan/Blower/Compressor</td><td class="bn">Pressure rise বাড়লে ক্রমে: Fan → Blower → Compressor।</td></tr>
+          <tr><td class="hl">Rotodynamic vs PDP</td><td class="bn">Roto = high flow, low pressure, priming লাগে। PDP = high pressure, low flow, self-priming।</td></tr>
+          <tr><td class="hl">Centrifugal Pump</td><td class="bn">IN → SPIN (impeller: KE বাড়ায়) → OUT (volute: KE→PE)।</td></tr>
+          <tr><td class="hl">Impeller Types</td><td class="bn">Open → Semi-Open → Closed = efficiency বাড়ে, clogging resistance কমে।</td></tr>
+          <tr><td class="hl">Casing Rule</td><td class="bn">Friction ∝ v² — তাই high pressure/low velocity method-ই efficient।</td></tr>
+          <tr><td class="hl">Priming</td><td class="bn">সব বাতাস বের করে liquid দিয়ে ভরা, নাহলে impeller gas-bound হয়ে যায়।</td></tr>
+          <tr><td class="hl">Cavitation</td><td class="bn">Suction pressure &lt; vapor pressure → bubble তৈরি → downstream এ collapse।</td></tr>
+          <tr><td class="hl">Cavitation Prevention</td><td class="bn">R-L-R-U-P-F: Raise level, Lower temp, Reduce NPSHR, Use bigger eye, airtight Pump, decrease Friction।</td></tr>
+          <tr><td class="hl">NPSH Rule</td><td class="bn">Cavitation এড়াতে সবসময়: NPSH<sub>A</sub> &gt; NPSH<sub>R</sub>।</td></tr>
+          <tr><td class="hl">Series vs Parallel</td><td class="bn">Parallel → Flow যোগ হয়। Series → Head যোগ হয়।</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <svg class="cicon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide)" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
+      <div>
+        <strong>মনে রাখার সবচেয়ে গুরুত্বপূর্ণ formula</strong>
+        <p class="bn">এই লেকচারে সবচেয়ে বেশি exam-এ আসার সম্ভাবনা যেই relation-টার, সেটা হলো <b>Friction ∝ v²</b> আর <b>NPSHA &gt; NPSHR</b> — এই দুইটা এক মিনিটে লিখতে পারলে related সব short question cover হয়ে যাবে।</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ Final Self-Test · চূড়ান্ত যাচাই</p>
+      <p class="q">সংক্ষেপে বলো: কেন centrifugal pump-কে সাধারণত suction source-এর নিচে বসানো হয়, এবং এটা কীভাবে cavitation prevention-এর সাথে সম্পর্কিত?</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">Pump-কে suction source-এর নিচে বসালে pump primed থাকে (gas-bound হওয়া এড়ানো যায়) এবং সেই সাথে suction-এ available static head বেড়ে যায়, যা NPSH<sub>A</sub> বাড়িয়ে দেয়। যেহেতু cavitation এড়াতে NPSH<sub>A</sub> &gt; NPSH<sub>R</sub> রাখা লাগে, তাই নিচে বসানো — priming ও cavitation prevention দুইটাতেই সাহায্য করে।</div>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p class="f-title">Fluid Machinery — Hand Note</p>
+  <p class="bn">ME 161, Lecture 9 &amp; 10 এর উপর ভিত্তি করে তৈরি সম্পূর্ণ hand-note। প্রতিটা টপিকে দুই ভাষায় ব্যাখ্যা এবং exam-focused shortcut একসাথে রাখা হয়েছে যাতে বুঝে পড়া এবং দ্রুত revision — দুইটাই এক জায়গায় হয়।</p>
+  <p class="f-mono">SHEET 01 · FLUID MACHINERY · DRAWN FOR ZIHAD · HSTU CSE, 2017 SYLLABUS</p>
+</footer>
+
+<script>
+// Gauge = reading-progress (pressure-gauge motif)
+(function(){
+  var fill = document.getElementById('gaugeFill');
+  var label = document.getElementById('gauge-label');
+  var circumference = 2 * Math.PI * 27;
+  function onScroll(){
+    var scrollTop = window.scrollY || document.documentElement.scrollTop;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+    var offset = circumference - (pct/100) * circumference;
+    fill.style.strokeDashoffset = offset;
+    label.textContent = Math.round(pct) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+  document.getElementById('gauge').addEventListener('click', function(){
+    window.scrollTo({ top:0, behavior:'smooth' });
+  });
+})();
+
+// Active nav highlight as sections pass
+(function(){
+  var sections = document.querySelectorAll('main .section');
+  var navLinks = document.querySelectorAll('.pipe-node');
+  var map = {};
+  navLinks.forEach(function(l){
+    var href = l.getAttribute('href');
+    if(href) map[href.substring(1)] = l;
+  });
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var id = entry.target.id;
+      if(entry.isIntersecting && map[id]){
+        navLinks.forEach(function(l){ l.classList.remove('active'); });
+        map[id].classList.add('active');
+        map[id].scrollIntoView({ block:'nearest', inline:'center', behavior:'smooth' });
+      }
+    });
+  }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
+  sections.forEach(function(s){ observer.observe(s); });
+})();
+
+// Reveal-on-scroll for sections
+(function(){
+  var reveals = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(function(r){ io.observe(r); });
+})();
+
+// Slow ambient impeller spin in the Fig. 4.1 diagram (subtle, not distracting)
+(function(){
+  var blades = document.getElementById('impellerBlades');
+  if(!blades) return;
+  var angle = 0;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  function spin(){
+    angle = (angle + 0.15) % 360;
+    blades.style.transform = 'rotate(' + angle + 'deg)';
+    requestAnimationFrame(spin);
+  }
+  requestAnimationFrame(spin);
+})();
+</script>
+
+</body>
+</html>
