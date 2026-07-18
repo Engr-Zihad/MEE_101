@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reciprocating Pump — হাতে-লেখা নোট</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink-navy:#0b2545; --ink-navy-2:#13315c; --blueprint:#0e3a5c; --blueprint-line:#2f6690;
+  --paper:#f6f1e4; --paper-2:#efe6d1; --paper-line:#d8cba9; --oxide:#b5471b; --oxide-2:#8f3413;
+  --brass:#a9862f; --verdigris:#4b7d72; --ink-soft:#3b4a5a; --white-cool:#fbf9f2; --shadow:rgba(11,37,69,0.18);
+  --font-display:'Fraunces',serif; --font-bn:'Noto Sans Bengali','Space Grotesk',sans-serif;
+  --font-sans:'Space Grotesk',sans-serif; --font-mono:'IBM Plex Mono',monospace;
+  --radius-s:6px; --radius-m:12px; --radius-l:22px;
+}
+*{ box-sizing:border-box; } html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:linear-gradient(var(--paper),var(--paper)),
+    repeating-linear-gradient(0deg, transparent 0 38px, rgba(11,37,69,0.035) 38px 39px),
+    repeating-linear-gradient(90deg, transparent 0 38px, rgba(11,37,69,0.035) 38px 39px);
+  color:var(--ink-navy); font-family:var(--font-bn); line-height:1.75; font-size:16px;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{ background:var(--oxide); color:var(--white-cool); }
+.en{ font-family:var(--font-sans); } .mono{ font-family:var(--font-mono); letter-spacing:0.02em; }
+a{ color:var(--oxide-2); } p{ max-width:76ch; }
+
+#gauge{ position:fixed; top:22px; right:22px; width:60px; height:60px; z-index:500; cursor:pointer; }
+#gauge svg{ width:100%; height:100%; transform:rotate(-90deg); }
+#gauge circle.track{ fill:none; stroke:var(--paper-line); stroke-width:5; }
+#gauge circle.fill{ fill:none; stroke:var(--oxide); stroke-width:5; stroke-linecap:round; transition:stroke-dashoffset .15s linear; }
+#gauge-label{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:9.5px; font-weight:600; color:var(--ink-navy); }
+@media (max-width:720px){ #gauge{ width:42px; height:42px; top:10px; right:10px; } #gauge-label{ font-size:7.5px; } }
+
+.titleblock{ border-bottom:3px solid var(--ink-navy); background:linear-gradient(180deg, var(--white-cool), var(--paper)); padding:28px clamp(16px,4vw,56px) 18px; position:relative; }
+.titleblock::after{ content:""; position:absolute; left:0; right:0; bottom:-7px; height:3px; background:repeating-linear-gradient(90deg, var(--ink-navy) 0 14px, transparent 14px 22px); }
+.tb-row{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:18px; }
+.tb-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--blueprint-line); font-weight:600; margin:0 0 8px; }
+.tb-title{ font-family:var(--font-display); font-weight:900; font-size:clamp(28px,4.6vw,48px); line-height:1.03; margin:0; color:var(--ink-navy); }
+.tb-title .accent{ color:var(--oxide); font-style:italic; font-weight:700; }
+.tb-sub{ margin:10px 0 0; font-size:15px; color:var(--ink-soft); max-width:64ch; font-family:var(--font-bn); }
+.tb-stamp{ border:2px solid var(--ink-navy); border-radius:var(--radius-s); padding:10px 16px; text-align:right; background:var(--white-cool); font-family:var(--font-mono); font-size:10.5px; color:var(--ink-soft); line-height:1.7; min-width:190px; }
+.tb-stamp b{ color:var(--ink-navy); font-size:11.5px; } .tb-stamp .stamp-red{ color:var(--oxide); font-weight:700; }
+
+nav.pipeline{ position:sticky; top:0; z-index:400; background:var(--ink-navy); border-bottom:3px solid var(--oxide); overflow-x:auto; scrollbar-width:thin; }
+nav.pipeline::-webkit-scrollbar{ height:5px; } nav.pipeline::-webkit-scrollbar-thumb{ background:var(--blueprint-line); }
+.pipe-track{ display:flex; align-items:stretch; min-width:max-content; padding:0 clamp(10px,3vw,40px); }
+.pipe-node{ display:flex; align-items:center; gap:7px; padding:12px 14px; color:#c9d8ea; text-decoration:none; font-family:var(--font-mono); font-size:11px; font-weight:600; white-space:nowrap; border-right:1px solid rgba(255,255,255,0.12); transition:background .18s, color .18s; }
+.pipe-node .num{ display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; border-radius:50%; border:1.5px solid var(--brass); color:var(--brass); font-size:9px; }
+.pipe-node:hover{ background:var(--ink-navy-2); color:#fff; }
+.pipe-node.active{ background:var(--oxide); color:#fff; } .pipe-node.active .num{ border-color:#fff; color:#fff; }
+
+main{ max-width:1120px; margin:0 auto; padding:0 clamp(14px,4vw,56px) 120px; }
+.section{ padding-top:54px; scroll-margin-top:60px; }
+.section-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:6px; border-bottom:2px solid var(--ink-navy); padding-bottom:11px; }
+.section-index{ font-family:var(--font-mono); font-size:12px; color:var(--oxide); font-weight:700; border:1.5px solid var(--oxide); border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; flex:none; }
+.section-title{ font-family:var(--font-display); font-weight:800; font-size:clamp(21px,3vw,29px); margin:0; color:var(--ink-navy); }
+.section-title .bn-t{ font-family:var(--font-bn); font-weight:700; font-size:0.72em; color:var(--blueprint); }
+.section-kicker{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.1em; color:var(--blueprint-line); margin:13px 0 6px; }
+
+.definition{ background:var(--white-cool); border:1.5px solid var(--ink-navy); border-left:6px solid var(--ink-navy); border-radius:var(--radius-m); padding:16px 20px; margin:16px 0; box-shadow:4px 4px 0 var(--shadow); font-family:var(--font-sans); }
+.definition .d-label{ font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass); font-weight:700; margin:0 0 7px; }
+.definition p{ margin:0; font-size:15px; color:var(--ink-navy-2); }
+
+.explain{ background:linear-gradient(180deg,#fbf6e8,#f6efdb); border:1.5px solid var(--paper-line); border-left:4px solid var(--verdigris); border-radius:var(--radius-m); padding:16px 20px; margin:15px 0; font-family:var(--font-bn); font-size:15.5px; color:var(--ink-navy-2); }
+.explain .ex-label{ font-family:var(--font-sans); font-size:10px; text-transform:uppercase; letter-spacing:0.09em; color:var(--verdigris); font-weight:700; margin:0 0 8px; display:flex; align-items:center; gap:6px; }
+.explain .ex-label::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--verdigris); }
+.explain p{ margin:0 0 8px; } .explain p:last-child{ margin-bottom:0; }
+
+.shortcut{ background:#fbf3e9; border:1.5px solid var(--brass); border-left:5px solid var(--oxide); border-radius:var(--radius-m); padding:14px 19px; margin:16px 0; font-family:var(--font-bn); font-size:14.5px; }
+.shortcut .sc-label{ display:flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--oxide-2); font-weight:700; margin:0 0 8px; }
+.shortcut b{ color:var(--oxide-2); }
+
+.tbl-wrap{ overflow-x:auto; margin:18px 0; border-radius:var(--radius-m); border:1.5px solid var(--ink-navy); }
+table.spec{ width:100%; border-collapse:collapse; background:var(--white-cool); font-size:13.5px; min-width:540px; font-family:var(--font-sans); }
+table.spec th{ background:var(--ink-navy); color:var(--paper); text-align:left; padding:10px 13px; font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600; }
+table.spec td{ padding:10px 13px; border-top:1px solid var(--paper-line); vertical-align:top; }
+table.spec tr:nth-child(even) td{ background:#f9f4e6; }
+table.spec td.hl{ color:var(--oxide-2); font-weight:700; }
+
+.flow{ display:flex; flex-wrap:wrap; gap:0; margin:18px 0; align-items:stretch; }
+.flow-step{ flex:1 1 155px; background:var(--white-cool); border:1.5px solid var(--ink-navy); padding:13px 15px; position:relative; min-width:150px; }
+.flow-step + .flow-step{ border-left:none; }
+.flow-step:first-child{ border-radius:var(--radius-m) 0 0 var(--radius-m); }
+.flow-step:last-child{ border-radius:0 var(--radius-m) var(--radius-m) 0; }
+@media (max-width:680px){ .flow{ flex-direction:column; } .flow-step{ border-left:1.5px solid var(--ink-navy) !important; border-top:none; } .flow-step:first-child{ border-radius:var(--radius-m) var(--radius-m) 0 0; border-top:1.5px solid var(--ink-navy) !important; } .flow-step:last-child{ border-radius:0 0 var(--radius-m) var(--radius-m); } }
+.flow-step::after{ content:"→"; position:absolute; right:-12px; top:50%; transform:translateY(-50%); color:var(--oxide); font-weight:700; font-size:16px; z-index:5; background:var(--paper); width:20px; text-align:center; }
+@media (max-width:680px){ .flow-step::after{ content:"↓"; right:auto; left:50%; top:auto; bottom:-15px; transform:translateX(-50%); } }
+.flow-step:last-child::after{ display:none; }
+.flow-num{ font-family:var(--font-mono); font-size:9.5px; color:var(--brass); font-weight:700; border:1px solid var(--brass); border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+.flow-step h4{ margin:0 0 4px; font-size:13px; font-family:var(--font-sans); color:var(--ink-navy); }
+.flow-step p{ margin:0; font-size:12px; color:var(--ink-soft); font-family:var(--font-bn); }
+
+.diagram-frame{ border:1.5px solid var(--ink-navy); border-radius:var(--radius-m); background:var(--white-cool); padding:18px; margin:20px 0; position:relative; }
+.diagram-frame::before{ content:"FIG."; position:absolute; top:-11px; left:15px; background:var(--oxide); color:#fff; font-family:var(--font-mono); font-size:9.5px; padding:2px 8px; border-radius:3px; font-weight:700; letter-spacing:0.05em; }
+.diagram-cap{ text-align:center; font-family:var(--font-bn); font-size:12px; color:var(--ink-soft); margin-top:11px; line-height:1.6; }
+.diagram-cap b{ color:var(--ink-navy); } svg text{ font-family:var(--font-sans), sans-serif; }
+
+.callout{ border:1.5px solid var(--oxide); background:#fdf1ea; border-radius:var(--radius-m); padding:15px 19px; margin:18px 0; display:flex; gap:12px; align-items:flex-start; font-family:var(--font-bn); }
+.callout .cicon{ flex:none; width:22px; height:22px; margin-top:1px; }
+.callout strong{ color:var(--oxide-2); display:block; margin-bottom:4px; font-size:12px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:0.05em; }
+.callout p{ margin:0; font-size:14px; color:var(--ink-navy-2); }
+.callout.verdi{ border-color:var(--verdigris); background:#eef5f2; } .callout.verdi strong{ color:#2e5950; }
+
+.formula{ background:var(--ink-navy); color:var(--paper); border-radius:var(--radius-m); padding:18px 22px; margin:18px 0; font-family:var(--font-mono); font-size:15.5px; text-align:center; letter-spacing:0.02em; box-shadow:4px 4px 0 var(--shadow); border:1.5px solid var(--ink-navy); }
+.formula .fx-label{ display:block; font-size:9.5px; color:#93b3d4; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:7px; font-family:var(--font-mono); }
+.formula .fx-note{ display:block; font-family:var(--font-bn); font-size:12px; color:#93b3d4; margin-top:8px; letter-spacing:0; }
+
+.quiz{ border:2px dashed var(--brass); border-radius:var(--radius-m); background:#fbf6e8; padding:15px 19px; margin:22px 0 10px; font-family:var(--font-bn); }
+.quiz-head{ display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.07em; color:var(--brass); font-weight:700; margin:0 0 9px; }
+.quiz p.q{ margin:0 0 10px; font-weight:600; color:var(--ink-navy); font-size:14.5px; }
+.quiz-reveal summary{ cursor:pointer; color:var(--oxide-2); font-family:var(--font-mono); font-size:11.5px; font-weight:600; list-style:none; display:inline-flex; align-items:center; gap:6px; }
+.quiz-reveal summary::-webkit-details-marker{ display:none; } .quiz-reveal summary::before{ content:"▸"; transition:transform .15s; }
+.quiz-reveal[open] summary::before{ transform:rotate(90deg); }
+.quiz-reveal .ans{ margin-top:9px; padding-top:9px; border-top:1px solid var(--paper-line); font-size:13.5px; color:var(--ink-navy-2); }
+
+.type-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin:18px 0; }
+.type-card{ border:1.5px solid var(--ink-navy); border-radius:var(--radius-m); padding:15px; background:var(--white-cool); }
+.type-card h4{ margin:0 0 6px; font-family:var(--font-sans); font-size:14px; color:var(--ink-navy); }
+.type-card p{ margin:0; font-size:13px; color:var(--ink-soft); font-family:var(--font-bn); }
+
+.problem-card{ border:2px solid var(--ink-navy); border-radius:var(--radius-m); background:var(--white-cool); margin:22px 0; overflow:hidden; box-shadow:5px 5px 0 var(--shadow); }
+.problem-head{ background:var(--ink-navy); color:var(--paper); padding:13px 20px; font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.06em; text-transform:uppercase; font-weight:700; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.problem-head .ptag{ background:var(--oxide); padding:3px 10px; border-radius:20px; font-size:10px; }
+.problem-body{ padding:20px 22px; }
+.problem-intro{ font-family:var(--font-bn); font-size:14.5px; color:var(--ink-navy-2); margin:0 0 15px; background:#f2ede0; border-left:3px solid var(--verdigris); padding:10px 14px; border-radius:6px; }
+.given-box{ background:#f2ede0; border:1px dashed var(--blueprint-line); border-radius:var(--radius-s); padding:13px 17px; margin-bottom:15px; }
+.given-box .gb-label{ font-family:var(--font-sans); font-weight:700; text-transform:uppercase; font-size:10px; letter-spacing:0.07em; color:var(--blueprint); margin-bottom:8px; }
+.given-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:5px 16px; font-family:var(--font-mono); font-size:12.5px; color:var(--ink-navy-2); }
+.find-box{ margin-bottom:15px; font-size:14px; font-family:var(--font-bn); } .find-box b{ color:var(--oxide-2); }
+.part{ margin:16px 0; padding-top:14px; border-top:1px dashed var(--paper-line); }
+.part:first-of-type{ border-top:none; padding-top:0; margin-top:0; }
+.part-title{ font-family:var(--font-sans); font-weight:700; font-size:13.5px; color:var(--ink-navy); margin:0 0 9px; display:flex; gap:8px; align-items:center; }
+.part-title .p-letter{ width:22px; height:22px; border-radius:50%; background:var(--oxide); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; flex:none; font-family:var(--font-mono); }
+.calc{ font-family:var(--font-mono); font-size:13.5px; color:var(--ink-navy-2); line-height:1.9; padding:4px 0 4px 13px; border-left:3px solid var(--blueprint-line); margin:7px 0; overflow-x:auto; }
+.calc .step{ display:block; white-space:nowrap; }
+.answer{ display:inline-flex; align-items:baseline; gap:8px; background:var(--ink-navy); color:var(--paper); padding:7px 15px; border-radius:8px; font-family:var(--font-mono); font-weight:700; font-size:14px; margin-top:6px; }
+.answer .a-label{ font-size:9px; opacity:0.75; text-transform:uppercase; letter-spacing:0.05em; font-family:var(--font-sans); font-weight:600; }
+
+.margin-note{ border-left:4px solid var(--verdigris); padding:4px 0 4px 14px; margin:16px 0; font-size:13px; color:#345048; font-style:italic; font-family:var(--font-bn); }
+
+footer{ background:var(--ink-navy); color:#c9d8ea; padding:36px clamp(16px,4vw,56px) 30px; margin-top:58px; border-top:5px solid var(--oxide); }
+footer .f-title{ font-family:var(--font-display); font-weight:800; font-size:19px; color:#fff; margin:0 0 8px; }
+footer p{ font-size:13px; margin:0 0 6px; color:#a9c0da; max-width:68ch; font-family:var(--font-bn); }
+footer .f-mono{ font-family:var(--font-mono); font-size:10.5px; color:#7f9cbb; margin-top:13px; }
+
+@media print{ #gauge, nav.pipeline{ display:none !important; } body{ background:#fff; } .section{ page-break-inside:avoid; } }
+@media (max-width:640px){ .tb-row{ flex-direction:column; align-items:flex-start; } .tb-stamp{ align-self:stretch; text-align:left; } }
+.reveal{ opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease; } .reveal.in{ opacity:1; transform:translateY(0); }
+
+.toc-intro{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px; margin:22px 0 10px; }
+.toc-item{ border:1.5px solid var(--ink-navy); border-radius:var(--radius-s); padding:11px 13px; text-decoration:none; color:var(--ink-navy); background:var(--white-cool); display:flex; align-items:center; gap:9px; font-size:12.5px; font-weight:600; font-family:var(--font-sans); }
+.toc-item:hover{ background:var(--ink-navy); color:#fff; }
+.toc-item .tnum{ font-family:var(--font-mono); font-size:10px; border:1px solid currentColor; border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center; flex:none; }
+</style>
+</head>
+<body>
+
+<div id="gauge" title="পড়ার অগ্রগতি">
+  <svg viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"></circle><circle class="fill" id="gaugeFill" cx="32" cy="32" r="27" stroke-dasharray="169.6" stroke-dashoffset="169.6"></circle></svg>
+  <div id="gauge-label">0%</div>
+</div>
+
+<header class="titleblock">
+  <div class="tb-row">
+    <div>
+      <p class="tb-eyebrow">Fluid Machinery · Positive Displacement Pump</p>
+      <h1 class="tb-title">Reciprocating Pump <span class="accent">হাতে-লেখা নোট</span></h1>
+      <p class="tb-sub">সহজ ভাষায়, বাংলা + English মিশিয়ে — ঠিক যেভাবে একজন ভালো student নিজের জন্য exam-এর আগে নোট বানায়। কোনো topic বাদ নেই, দুইটা math problem-ই পুরোপুরি সমাধান করা আছে।</p>
+    </div>
+    <div class="tb-stamp">
+      <div><b>FOR:</b> Zihad · HSTU CSE</div>
+      <div><b>SHEET:</b> Reciprocating Pump</div>
+      <div class="stamp-red"><b>STYLE:</b> Simple · Bilingual</div>
+    </div>
+  </div>
+</header>
+
+<nav class="pipeline" id="pipeline">
+  <div class="pipe-track">
+    <a class="pipe-node" href="#s0"><span class="num">·</span> সূচি</a>
+    <a class="pipe-node" href="#s1"><span class="num">1</span> Intro</a>
+    <a class="pipe-node" href="#s2"><span class="num">2</span> Components</a>
+    <a class="pipe-node" href="#s3"><span class="num">3</span> Working</a>
+    <a class="pipe-node" href="#s4"><span class="num">4</span> Single/Double</a>
+    <a class="pipe-node" href="#s5"><span class="num">5</span> Multi-Cylinder</a>
+    <a class="pipe-node" href="#s6"><span class="num">6</span> Discharge</a>
+    <a class="pipe-node" href="#s7"><span class="num">7</span> Slip</a>
+    <a class="pipe-node" href="#s8"><span class="num">8</span> Negative Slip</a>
+    <a class="pipe-node" href="#s9"><span class="num">9</span> Power</a>
+    <a class="pipe-node" href="#s10"><span class="num">10</span> Problem 1</a>
+    <a class="pipe-node" href="#s11"><span class="num">11</span> Problem 2</a>
+    <a class="pipe-node" href="#s12"><span class="num">12</span> vs Centrifugal</a>
+    <a class="pipe-node" href="#s13"><span class="num">13</span> Summary</a>
+  </div>
+</nav>
+
+<main>
+
+  <section class="section reveal" id="s0">
+    <div class="section-head"><span class="section-index">·</span><h2 class="section-title">সূচি <span class="bn-t">— Contents</span></h2></div>
+    <div class="toc-intro">
+      <a class="toc-item" href="#s1"><span class="tnum">1</span> পরিচিতি</a>
+      <a class="toc-item" href="#s2"><span class="tnum">2</span> মূল অংশ</a>
+      <a class="toc-item" href="#s3"><span class="tnum">3</span> কার্যপ্রণালী</a>
+      <a class="toc-item" href="#s4"><span class="tnum">4</span> Single/Double Acting</a>
+      <a class="toc-item" href="#s5"><span class="tnum">5</span> Multi-Cylinder</a>
+      <a class="toc-item" href="#s6"><span class="tnum">6</span> Discharge Formula</a>
+      <a class="toc-item" href="#s7"><span class="tnum">7</span> Slip</a>
+      <a class="toc-item" href="#s8"><span class="tnum">8</span> Negative Slip</a>
+      <a class="toc-item" href="#s9"><span class="tnum">9</span> Power</a>
+      <a class="toc-item" href="#s10"><span class="tnum">10</span> Problem 1 (solved)</a>
+      <a class="toc-item" href="#s11"><span class="tnum">11</span> Problem 2 (solved)</a>
+      <a class="toc-item" href="#s12"><span class="tnum">12</span> vs Centrifugal</a>
+      <a class="toc-item" href="#s13"><span class="tnum">13</span> Summary Sheet</a>
+    </div>
+  </section>
+
+  <!-- S1 -->
+  <section class="section reveal" id="s1">
+    <div class="section-head"><span class="section-index">1</span><h2 class="section-title">Introduction <span class="bn-t">— পরিচিতি</span></h2></div>
+
+    <div class="definition">
+      <p class="d-label">Definition</p>
+      <p>A reciprocating pump is a <b>positive displacement pump</b> — liquid is trapped in a chamber and physically forced out by a moving piston/plunger.</p>
+    </div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p>Pump-এর কাজ হলো পানির energy level বাড়িয়ে উঁচুতে তোলা। Reciprocating pump হলো positive displacement family-র সদস্য — impeller ঘুরিয়ে না, বরং piston দিয়ে সরাসরি ধাক্কা দিয়ে liquid বের করে দেয়। এটা এমন জায়গায় ভালো কাজ করে যেখানে discharge কম লাগবে কিন্তু pressure অনেক বেশি লাগবে — যেমন oil drilling।</p>
+      <p>Industrial কাজে cost আর maintenance বেশি হওয়ায় এটা এখন অনেকটা obsolete, কিন্তু hand-operated well pump-এ এখনো ভালোভাবে চলে।</p>
+    </div>
+
+    <div class="shortcut">
+      <p class="sc-label">⚡ Shortcut</p>
+      <p><b>"Small Flow, Big Push"</b> — কম flow, অনেক বেশি pressure দেখলেই বুঝবে reciprocating pump, centrifugal না।</p>
+    </div>
+  </section>
+
+  <!-- S2 -->
+  <section class="section reveal" id="s2">
+    <div class="section-head"><span class="section-index">2</span><h2 class="section-title">Main Components <span class="bn-t">— মূল অংশ</span></h2></div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p>মূল অংশ: <b>piston/plunger</b>, <b>cylinder</b>, <b>connecting rod</b>, আর <b>crank</b> (বাইরের motor এটাকে ঘোরায়)। Cylinder-এর সাথে sump জোড়া থাকে <b>suction pipe</b> দিয়ে, আর delivery tank জোড়া থাকে <b>delivery pipe</b> দিয়ে — দুই জায়গাতেই <b>non-return valve</b> থাকে, মানে liquid শুধু একদিকেই যেতে পারবে।</p>
+    </div>
+
+    <div class="diagram-frame">
+      <svg viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:640px; height:auto; display:block; margin:0 auto;">
+        <rect x="10" y="300" width="130" height="55" fill="#2f6690" opacity="0.15"/>
+        <path d="M10 300 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#2f6690" stroke-width="1.5" fill="none"/>
+        <text x="20" y="345" font-size="11" fill="#2f6690" font-weight="700">SUMP</text>
+        <line x1="75" y1="300" x2="75" y2="205" stroke="#0b2545" stroke-width="4"/>
+        <circle cx="75" cy="220" r="9" fill="#fbf9f2" stroke="#8f3413" stroke-width="2.5"/>
+        <path d="M69 224 l6 -8 6 8 z" fill="#8f3413"/>
+        <text x="88" y="270" font-size="11" fill="#3b4a5a">suction</text>
+        <text x="88" y="283" font-size="11" fill="#3b4a5a">pipe</text>
+        <text x="14" y="216" font-size="10.5" fill="#8f3413" font-weight="600">suction</text>
+        <text x="14" y="228" font-size="10.5" fill="#8f3413" font-weight="600">valve</text>
+        <rect x="55" y="175" width="150" height="60" fill="#eaf1f6" stroke="#0b2545" stroke-width="3" rx="3"/>
+        <text x="90" y="168" font-size="12" fill="#0b2545" font-weight="700">CYLINDER</text>
+        <rect x="120" y="180" width="22" height="50" fill="#4b7d72" opacity="0.7" stroke="#0b2545" stroke-width="2"/>
+        <text x="118" y="250" font-size="11" fill="#2e5950" font-weight="700">PISTON</text>
+        <line x1="142" y1="205" x2="330" y2="205" stroke="#0b2545" stroke-width="4"/>
+        <text x="220" y="196" font-size="10.5" fill="#3b4a5a">piston rod</text>
+        <line x1="330" y1="205" x2="440" y2="170" stroke="#0b2545" stroke-width="4"/>
+        <text x="345" y="182" font-size="10.5" fill="#3b4a5a">connecting rod</text>
+        <circle cx="480" cy="205" r="48" fill="none" stroke="#0b2545" stroke-width="2" stroke-dasharray="4,3"/>
+        <circle cx="480" cy="205" r="4" fill="#0b2545"/>
+        <line x1="480" y1="205" x2="440" y2="170" stroke="#b5471b" stroke-width="4"/>
+        <circle cx="440" cy="170" r="6" fill="#b5471b"/>
+        <text x="450" y="255" font-size="12" fill="#0b2545" font-weight="700" text-anchor="middle">CRANK (r)</text>
+        <text x="450" y="270" font-size="10" fill="#3b4a5a" text-anchor="middle">motor দিয়ে ঘোরে</text>
+        <text x="480" y="290" font-size="10.5" fill="#3b4a5a" text-anchor="middle">L = 2r (stroke length)</text>
+        <line x1="75" y1="175" x2="75" y2="55" stroke="#0b2545" stroke-width="4"/>
+        <circle cx="75" cy="130" r="9" fill="#fbf9f2" stroke="#8f3413" stroke-width="2.5"/>
+        <path d="M69 126 l6 8 6 -8 z" fill="#8f3413"/>
+        <text x="88" y="115" font-size="11" fill="#3b4a5a">delivery</text>
+        <text x="88" y="128" font-size="11" fill="#3b4a5a">pipe</text>
+        <text x="14" y="126" font-size="10.5" fill="#8f3413" font-weight="600">delivery</text>
+        <text x="14" y="138" font-size="10.5" fill="#8f3413" font-weight="600">valve</text>
+        <line x1="75" y1="55" x2="180" y2="55" stroke="#0b2545" stroke-width="4"/>
+        <path d="M175 48 l14 7 -14 7 z" fill="#b5471b"/>
+        <text x="195" y="60" font-size="11" fill="#8f3413" font-weight="700">delivery tank-এ</text>
+        <line x1="30" y1="300" x2="30" y2="205" stroke="#2f6690" stroke-width="1.2"/>
+        <text x="10" y="255" font-size="12" fill="#2f6690" font-weight="700">h&#8347;</text>
+        <line x1="30" y1="205" x2="30" y2="55" stroke="#a9862f" stroke-width="1.2"/>
+        <text x="10" y="132" font-size="12" fill="#7a5f22" font-weight="700">h&#8337;</text>
+      </svg>
+      <p class="diagram-cap">FIG. 2.1 — crank ঘুরলে connecting rod-এর মাধ্যমে piston সামনে-পেছনে move করে। h&#8347; = suction head, h&#8337; = delivery head।</p>
+    </div>
+
+    <div class="callout verdi">
+      <svg class="cicon" viewBox="0 0 24 24" fill="none" stroke="var(--verdigris)" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+      <div>
+        <strong>Piston vs Plunger</strong>
+        <p>দুটো প্রায় একই কাজ করে, কিন্তু গঠনে আলাদা। <b>Plunger</b>-এর seal স্থির থাকে, rod-টা এর ভেতর দিয়ে slide করে — high discharge-এর জন্য ভালো। <b>Piston</b>-এর seal piston-এর সাথেই move করে — low pressure-এর জন্য ব্যবহৃত হয়।</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- S3 -->
+  <section class="section reveal" id="s3">
+    <div class="section-head"><span class="section-index">3</span><h2 class="section-title">Working Principle <span class="bn-t">— কার্যপ্রণালী</span></h2></div>
+
+    <div class="flow">
+      <div class="flow-step"><div class="flow-num">1</div><h4>Suction Stroke</h4><p>Cylinder-এ suction pressure হয়, delivery valve বন্ধ থাকে।</p></div>
+      <div class="flow-step"><div class="flow-num">2</div><h4>প্রথম চালুতে বাতাস বের হয়</h4><p>Suction pipe-এর আটকা বাতাস আস্তে আস্তে বের হয়।</p></div>
+      <div class="flow-step"><div class="flow-num">3</div><h4>Liquid ওঠে</h4><p>বাতাস শেষ হলে atmospheric pressure liquid-কে ঠেলে ওপরে তোলে।</p></div>
+      <div class="flow-step"><div class="flow-num">4</div><h4>Delivery Stroke</h4><p>Piston liquid-কে ঠেলে delivery pipe-এ পাঠায়, suction valve বন্ধ থাকে।</p></div>
+    </div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p>Piston পিছালে cylinder-এ suction pressure তৈরি হয়। প্রথমবার চালু করলে suction pipe-এর বাতাস আগে বের হতে হয়, তারপর liquid ওঠে। Delivery stroke-এ piston liquid-কে ঠেলে বের করে দেয়।</p>
+    </div>
+
+    <div class="callout">
+      <svg class="cicon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide)" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
+      <div>
+        <strong>Centrifugal-এর সাথে বড় পার্থক্য</strong>
+        <p>Liquid বের হয় <b>intermittently</b> (থেমে থেমে) — শুধু delivery stroke-এর সময়। Centrifugal pump-এর মতো continuous flow না।</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ নিজেকে যাচাই করো</p>
+      <p class="q">প্রথমবার পাম্প চালু করলে liquid বের হতে দেরি হয় কেন?</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">Suction pipe প্রথমে বাতাসে ভরা থাকে, liquid দিয়ে না। প্রতিটা stroke একটু একটু করে বাতাস বের করে দেয়, পুরো বাতাস শেষ হলে তারপর liquid ওঠা শুরু করে।</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- S4 -->
+  <section class="section reveal" id="s4">
+    <div class="section-head"><span class="section-index">4</span><h2 class="section-title">Single vs Double Acting <span class="bn-t">— শ্রেণিবিভাগ ১</span></h2></div>
+
+    <div class="type-grid">
+      <div class="type-card"><h4>Single-Acting</h4><p>এক suction + এক delivery pipe। Piston-এর শুধু একপাশে liquid ভরে।</p></div>
+      <div class="type-card"><h4>Double-Acting</h4><p>দুই suction + দুই delivery pipe। Piston-এর দুইপাশেই liquid ভরে ও বের হয় — discharge প্রায় দ্বিগুণ।</p></div>
+    </div>
+
+    <div class="diagram-frame">
+      <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:560px; height:auto; display:block; margin:0 auto;">
+        <line x1="180" y1="30" x2="180" y2="90" stroke="#0b2545" stroke-width="3"/>
+        <path d="M175 36 l5 -8 5 8 z" fill="#0b2545"/>
+        <text x="150" y="20" font-size="12" fill="#0b2545" font-weight="700">Delivery (D₁)</text>
+        <rect x="90" y="90" width="220" height="55" fill="#eaf1f6" stroke="#0b2545" stroke-width="3" rx="3"/>
+        <rect x="185" y="95" width="18" height="45" fill="#4b7d72" opacity="0.7" stroke="#0b2545" stroke-width="2"/>
+        <line x1="203" y1="117" x2="320" y2="117" stroke="#0b2545" stroke-width="4"/>
+        <text x="95" y="163" font-size="11" fill="#3b4a5a" font-weight="700">S₁</text>
+        <text x="270" y="163" font-size="11" fill="#3b4a5a" font-weight="700">crank-এ</text>
+        <line x1="180" y1="150" x2="180" y2="185" stroke="#0b2545" stroke-width="3"/>
+        <path d="M175 179 l5 8 5 -8 z" fill="#0b2545"/>
+        <text x="145" y="205" font-size="12" fill="#0b2545" font-weight="700">Suction (S₁)</text>
+        <text x="140" y="70" font-size="13" fill="#0b2545" font-weight="700" text-anchor="middle">SINGLE-ACTING</text>
+        <line x1="380" y1="220" x2="640" y2="220" stroke="#d8cba9" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="440" y1="30" x2="440" y2="70" stroke="#0b2545" stroke-width="3"/>
+        <path d="M435 36 l5 -8 5 8 z" fill="#0b2545"/>
+        <text x="405" y="20" font-size="11" fill="#0b2545" font-weight="700">D₁</text>
+        <line x1="560" y1="30" x2="560" y2="70" stroke="#0b2545" stroke-width="3"/>
+        <path d="M555 36 l5 -8 5 8 z" fill="#0b2545"/>
+        <text x="565" y="20" font-size="11" fill="#0b2545" font-weight="700">D₂</text>
+        <rect x="410" y="90" width="180" height="55" fill="#eaf1f6" stroke="#0b2545" stroke-width="3" rx="3"/>
+        <rect x="490" y="95" width="18" height="45" fill="#4b7d72" opacity="0.7" stroke="#0b2545" stroke-width="2"/>
+        <line x1="508" y1="117" x2="620" y2="117" stroke="#0b2545" stroke-width="4"/>
+        <text x="415" y="163" font-size="11" fill="#3b4a5a" font-weight="700">S₁</text>
+        <text x="565" y="163" font-size="11" fill="#3b4a5a" font-weight="700">S₂</text>
+        <line x1="440" y1="150" x2="440" y2="185" stroke="#0b2545" stroke-width="3"/>
+        <path d="M435 179 l5 8 5 -8 z" fill="#0b2545"/>
+        <line x1="560" y1="150" x2="560" y2="185" stroke="#0b2545" stroke-width="3"/>
+        <path d="M555 179 l5 8 5 -8 z" fill="#0b2545"/>
+        <text x="500" y="70" font-size="13" fill="#0b2545" font-weight="700" text-anchor="middle">DOUBLE-ACTING</text>
+      </svg>
+      <p class="diagram-cap">FIG. 4.1 — Single-acting-এ এক পাশ active, double-acting-এ দুই পাশই active।</p>
+    </div>
+  </section>
+
+  <!-- S5 -->
+  <section class="section reveal" id="s5">
+    <div class="section-head"><span class="section-index">5</span><h2 class="section-title">Multi-Cylinder Types <span class="bn-t">— শ্রেণিবিভাগ ২</span></h2></div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p>এক cylinder = <b>single-cylinder</b> pump (single বা double acting হতে পারে)। দুই cylinder = <b>double-cylinder/two-throw</b> pump, crank ১৮০° আলাদা। তিন cylinder = <b>triple-cylinder/three-throw</b> pump, crank ১২০° আলাদা — প্রতিটার নিজস্ব suction, delivery, piston থাকে। চার/পাঁচ cylinder-ও হয় (৯০°/৭২° apart)।</p>
+    </div>
+
+    <div class="diagram-frame">
+      <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:560px; height:auto; display:block; margin:0 auto;">
+        <text x="150" y="26" font-size="12.5" fill="#0b2545" font-weight="700" text-anchor="middle">DOUBLE CYLINDER (180°)</text>
+        <circle cx="150" cy="115" r="55" fill="none" stroke="#0b2545" stroke-width="2" stroke-dasharray="4,3"/>
+        <line x1="95" y1="115" x2="205" y2="115" stroke="#b5471b" stroke-width="3"/>
+        <circle cx="95" cy="115" r="6" fill="#b5471b"/><circle cx="205" cy="115" r="6" fill="#b5471b"/>
+        <circle cx="150" cy="115" r="4" fill="#0b2545"/>
+        <text x="70" y="100" font-size="10.5" fill="#8f3413" font-weight="700">crank 1</text>
+        <text x="185" y="100" font-size="10.5" fill="#8f3413" font-weight="700">crank 2</text>
+        <text x="145" y="200" font-size="11" fill="#3b4a5a" text-anchor="middle">১৮০° আলাদা</text>
+        <line x1="330" y1="20" x2="330" y2="220" stroke="#d8cba9" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <text x="480" y="26" font-size="12.5" fill="#0b2545" font-weight="700" text-anchor="middle">TRIPLE CYLINDER (120°)</text>
+        <circle cx="480" cy="115" r="55" fill="none" stroke="#0b2545" stroke-width="2" stroke-dasharray="4,3"/>
+        <circle cx="480" cy="115" r="4" fill="#0b2545"/>
+        <line x1="480" y1="115" x2="480" y2="60" stroke="#b5471b" stroke-width="3"/><circle cx="480" cy="60" r="6" fill="#b5471b"/>
+        <line x1="480" y1="115" x2="527" y2="142" stroke="#b5471b" stroke-width="3"/><circle cx="527" cy="142" r="6" fill="#b5471b"/>
+        <line x1="480" y1="115" x2="433" y2="142" stroke="#b5471b" stroke-width="3"/><circle cx="433" cy="142" r="6" fill="#b5471b"/>
+        <text x="488" y="55" font-size="10" fill="#8f3413" font-weight="700">1</text>
+        <text x="535" y="147" font-size="10" fill="#8f3413" font-weight="700">2</text>
+        <text x="415" y="147" font-size="10" fill="#8f3413" font-weight="700">3</text>
+        <text x="480" y="200" font-size="11" fill="#3b4a5a" text-anchor="middle">১২০° আলাদা</text>
+      </svg>
+      <p class="diagram-cap">FIG. 5.1 — crank আলাদা angle-এ থাকলে delivery stroke stagger হয়, flow smooth হয়।</p>
+    </div>
+
+    <div class="shortcut">
+      <p class="sc-label">⚡ Shortcut</p>
+      <p><b>360° ÷ cylinder সংখ্যা = crank angle।</b> ২টা→১৮০°, ৩টা→১২০°, ৪টা→৯০°।</p>
+    </div>
+  </section>
+
+  <!-- S6 -->
+  <section class="section reveal" id="s6">
+    <div class="section-head"><span class="section-index">6</span><h2 class="section-title">Discharge Formula <span class="bn-t">— ডিসচার্জ সূত্র</span></h2></div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p>A = cylinder-এর area, L = stroke length, N = rpm। প্রতি revolution-এ একটা stroke হয়, তাই discharge = Area × Length × (রেট)।</p>
+    </div>
+
+    <div class="formula">
+      <span class="fx-label">Single Acting</span>
+      Q<sub>th</sub> = A · L · N / 60
+    </div>
+    <div class="formula">
+      <span class="fx-label">Double Acting (rod area বাদ দিলে)</span>
+      Q<sub>th</sub> = 2 · A · L · N / 60
+      <span class="fx-note">Single-acting-এর ঠিক দ্বিগুণ।</span>
+    </div>
+
+    <div class="callout">
+      <svg class="cicon" viewBox="0 0 24 24" fill="none" stroke="var(--oxide)" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
+      <div>
+        <strong>মনে রাখো</strong>
+        <p>এটা <b>theoretical</b> discharge Q<sub>th</sub>। Leakage আর valve বন্ধ হতে দেরির কারণে actual discharge Q<sub>a</sub> সবসময় এর চেয়ে একটু কম হয় — এটাই পরের section-এর slip।</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- S7 -->
+  <section class="section reveal" id="s7">
+    <div class="section-head"><span class="section-index">7</span><h2 class="section-title">Slip &amp; % Slip <span class="bn-t">— স্লিপ</span></h2></div>
+
+    <div class="formula">
+      <span class="fx-label">Slip</span>
+      Slip = Q<sub>th</sub> − Q<sub>a</sub>
+    </div>
+    <div class="formula">
+      <span class="fx-label">Percentage Slip</span>
+      % Slip = [(Q<sub>th</sub> − Q<sub>a</sub>) / Q<sub>th</sub>] × 100 = (1 − C<sub>d</sub>) × 100
+    </div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p><b>C<sub>d</sub></b> (coefficient of discharge) = Q<sub>a</sub>/Q<sub>th</sub> — একে percentage-এ বললে <b>volumetric efficiency</b> বলে, সাধারণত ৯৫-৯৮%। ভালো অবস্থার pump-এ %slip প্রায় ২% হয়।</p>
+    </div>
+
+    <div class="shortcut">
+      <p class="sc-label">⚡ Shortcut</p>
+      <p><b>C<sub>d</sub> + %Slip (ভগ্নাংশে) = 1</b> — একটা জানলে আরেকটা সরাসরি বের করা যায়।</p>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ নিজেকে যাচাই করো</p>
+      <p class="q">কোনো pump-এর C<sub>d</sub> = 0.96 হলে %Slip কত?</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">%Slip = (1 − 0.96) × 100 = 4%</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- S8 -->
+  <section class="section reveal" id="s8">
+    <div class="section-head"><span class="section-index">8</span><h2 class="section-title">Negative Slip <span class="bn-t">— ঋণাত্মক স্লিপ</span></h2></div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p>সবসময় Q<sub>a</sub>, Q<sub>th</sub>-এর চেয়ে কম হয় না। Suction pipe লম্বা, delivery pipe ছোট, আর pump দ্রুত চললে — suction-এর inertia force delivery valve-কে সময়ের আগেই খুলে দিতে পারে। তখন delivery stroke শুরুর আগেই কিছু liquid delivery pipe-এ ঢুকে যায়।</p>
+    </div>
+
+    <div class="callout verdi">
+      <svg class="cicon" viewBox="0 0 24 24" fill="none" stroke="var(--verdigris)" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+      <div>
+        <strong>ফলাফল</strong>
+        <p>C<sub>d</sub> > 1 হয়ে যায়, আর slip <b>negative</b> হয়ে যায় — Q<sub>a</sub> > Q<sub>th</sub>।</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- S9 -->
+  <section class="section reveal" id="s9">
+    <div class="section-head"><span class="section-index">9</span><h2 class="section-title">Power Input / Output <span class="bn-t">— শক্তি</span></h2></div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p>h<sub>s</sub> = suction head, h<sub>d</sub> = delivery head। H<sub>st</sub> = h<sub>s</sub> + h<sub>d</sub> (total static head)।</p>
+    </div>
+
+    <div class="formula">
+      <span class="fx-label">Theoretical Power</span>
+      P<sub>th</sub> = ρ · Q<sub>th</sub> · g · H<sub>st</sub>
+    </div>
+    <div class="formula">
+      <span class="fx-label">Actual Input Power</span>
+      P<sub>actual</sub> = P<sub>th</sub> / η
+      <span class="fx-note">η = efficiency। Loss থাকার কারণে actual power সবসময় theoretical-এর চেয়ে বেশি লাগে।</span>
+    </div>
+  </section>
+
+  <!-- S10 — PROBLEM 1 -->
+  <section class="section reveal" id="s10">
+    <div class="section-head"><span class="section-index">10</span><h2 class="section-title">Worked Problem 1 <span class="bn-t">— সমাধান</span></h2></div>
+
+    <div class="problem-card">
+      <div class="problem-head"><span>Single-Acting Reciprocating Pump</span><span class="ptag">PROBLEM 1</span></div>
+      <div class="problem-body">
+        <p class="problem-intro">এখানে আমরা ধাপে ধাপে বের করব: theoretical discharge, slip, coefficient of discharge, আর theoretical power।</p>
+        <div class="given-box">
+          <p class="gb-label">Given</p>
+          <div class="given-grid">
+            <div>Q<sub>a</sub> = 0.018 m³/s</div><div>N = 60 rpm</div>
+            <div>L = 500 mm = 0.5 m</div><div>D = 220 mm = 0.22 m</div>
+            <div>Total lift, H<sub>st</sub> = 15 m</div><div>ρ=1000, g=9.81</div>
+          </div>
+        </div>
+        <div class="find-box"><b>বের করতে হবে:</b> (a) Q<sub>th</sub> (b) Slip &amp; %Slip (c) C<sub>d</sub> (d) Theoretical power</div>
+
+        <div class="part">
+          <p class="part-title"><span class="p-letter">a</span>Theoretical Discharge</p>
+          <div class="calc">
+            <span class="step">A = (π/4)·D² = (π/4)·(0.22)² = 0.03801 m²</span>
+            <span class="step">Q<sub>th</sub> = A·L·N/60 = 0.03801 × 0.5 × 60/60 = 0.01901 m³/s</span>
+          </div>
+          <div class="answer"><span class="a-label">Answer</span> Q<sub>th</sub> ≈ 0.019 m³/s</div>
+        </div>
+
+        <div class="part">
+          <p class="part-title"><span class="p-letter">b</span>Slip &amp; % Slip</p>
+          <div class="calc">
+            <span class="step">Slip = 0.019 − 0.018 = 0.001 m³/s</span>
+            <span class="step">% Slip = 0.001/0.019 × 100 = 5.26 %</span>
+          </div>
+          <div class="answer"><span class="a-label">Answer</span> Slip = 0.001 m³/s, % Slip ≈ 5.26%</div>
+        </div>
+
+        <div class="part">
+          <p class="part-title"><span class="p-letter">c</span>Coefficient of Discharge</p>
+          <div class="calc"><span class="step">C<sub>d</sub> = 0.018/0.019 = 0.947</span></div>
+          <div class="answer"><span class="a-label">Answer</span> C<sub>d</sub> ≈ 0.947</div>
+        </div>
+
+        <div class="part">
+          <p class="part-title"><span class="p-letter">d</span>Theoretical Power</p>
+          <div class="calc">
+            <span class="step">P<sub>th</sub> = 1000 × 0.019 × 9.81 × 15</span>
+            <span class="step">= 2795.85 W</span>
+          </div>
+          <div class="answer"><span class="a-label">Answer</span> P<sub>th</sub> ≈ 2796 W = 2.796 kW</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S11 — PROBLEM 2 -->
+  <section class="section reveal" id="s11">
+    <div class="section-head"><span class="section-index">11</span><h2 class="section-title">Worked Problem 2 <span class="bn-t">— সমাধান</span></h2></div>
+
+    <div class="problem-card">
+      <div class="problem-head"><span>Three-Throw Reciprocating Pump</span><span class="ptag">PROBLEM 2</span></div>
+      <div class="problem-body">
+        <p class="problem-intro">তিন cylinder-এর pump — প্রথমে slip থেকে Q<sub>th</sub> বের করে speed N বের করব, তারপর friction + velocity head যোগ করে actual input power বের করব।</p>
+        <div class="given-box">
+          <p class="gb-label">Given</p>
+          <div class="given-grid">
+            <div>Q<sub>a</sub> = 0.1 m³/s</div><div>H<sub>st</sub> = 100 m</div>
+            <div>D = 250 mm = 0.25 m</div><div>L = 500 mm = 0.5 m</div>
+            <div>suction loss = 1 m</div><div>delivery loss = 16 m</div>
+            <div>V<sub>d</sub> = 1.4 m/s</div><div>η = 90%, slip = 2%</div>
+          </div>
+        </div>
+        <div class="find-box"><b>বের করতে হবে:</b> (a) Speed N (b) Input Power</div>
+
+        <div class="part">
+          <p class="part-title"><span class="p-letter">a</span>Pump Speed N</p>
+          <div class="calc">
+            <span class="step">Q<sub>th</sub> = Q<sub>a</sub>/(1−s) = 0.1/0.98 = 0.10204 m³/s</span>
+            <span class="step">A = (π/4)·(0.25)² = 0.04909 m²</span>
+            <span class="step">three-throw: Q<sub>th</sub> = 3·A·L·N/60</span>
+            <span class="step">0.10204 = 3 × 0.04909 × 0.5 × N/60</span>
+            <span class="step">N = 6.1224 / 0.07363</span>
+          </div>
+          <div class="answer"><span class="a-label">Answer</span> N ≈ 83.15 rpm</div>
+        </div>
+
+        <div class="part">
+          <p class="part-title"><span class="p-letter">b</span>Input Power</p>
+          <div class="calc">
+            <span class="step">H = H<sub>st</sub> + h<sub>fs</sub> + h<sub>fd</sub> + V<sub>d</sub>²/2g</span>
+            <span class="step">H = 100 + 1 + 16 + (1.4)²/19.62 = 117.1 m</span>
+          </div>
+          <div class="calc" style="margin-top:10px;">
+            <span class="step">P<sub>hyd</sub> = 1000 × 0.10204 × 9.81 × 117.1 ≈ 117,219 W</span>
+            <span class="step">P<sub>input</sub> = 117,219 / 0.90 ≈ 130,244 W</span>
+          </div>
+          <div class="answer"><span class="a-label">Answer</span> P<sub>input</sub> ≈ 130.2 kW</div>
+        </div>
+      </div>
+    </div>
+    <div class="margin-note">Source-এর answer 130.21 kW — দুটোই 130.2 kW-এ round হয়, তাই মিলে যাচ্ছে।</div>
+  </section>
+
+  <!-- S12 -->
+  <section class="section reveal" id="s12">
+    <div class="section-head"><span class="section-index">12</span><h2 class="section-title">vs Centrifugal Pump <span class="bn-t">— তুলনা</span></h2></div>
+
+    <div class="explain">
+      <p class="ex-label">সহজ ভাষায়</p>
+      <p>Reciprocating = কম flow কিন্তু অনেক বেশি pressure (৭০০ atm পর্যন্ত), viscosity-তে সমস্যা হয় না। Centrifugal = বেশি flow, মাঝারি pressure, viscosity-তে কার্যক্ষমতা কমে যায়।</p>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="spec">
+        <thead><tr><th>#</th><th>Reciprocating Pump</th><th>Centrifugal Pump</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">1</td><td>Low flow, high pressure (up to ~700 atm)</td><td>High flow, moderate pressure (few atm)</td></tr>
+          <tr><td class="hl">2</td><td>Constant flow rate at any outlet pressure</td><td>Variable discharge depending on outlet pressure</td></tr>
+          <tr><td class="hl">3</td><td>Viscosity-তে সমস্যা হয় না</td><td>Viscosity greatly affects performance</td></tr>
+          <tr><td class="hl">4</td><td>Flow control only via stroke length/speed</td><td>Flow throttled by valve control</td></tr>
+          <tr><td class="hl">5</td><td>Efficiency ~90%, constant</td><td>Efficiency ~80%, varies</td></tr>
+          <tr><td class="hl">6</td><td>Niche/specialty applications</td><td>General, very wide applications</td></tr>
+          <tr><td class="hl">7</td><td>Low-speed operation</td><td>High-speed operation</td></tr>
+          <tr><td class="hl">8</td><td>Very little pump-induced shear</td><td>Considerable shear during pumping</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- S13 -->
+  <section class="section reveal" id="s13">
+    <div class="section-head"><span class="section-index">13</span><h2 class="section-title">Summary Sheet <span class="bn-t">— সংক্ষিপ্তসার</span></h2></div>
+
+    <div class="tbl-wrap">
+      <table class="spec">
+        <thead><tr><th>Topic</th><th>Formula / মূল কথা</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Definition</td><td>Positive displacement — chamber-এ liquid ধরে piston দিয়ে ঠেলে বের করে</td></tr>
+          <tr><td class="hl">Single-acting</td><td>Q<sub>th</sub> = A·L·N/60</td></tr>
+          <tr><td class="hl">Double-acting</td><td>Q<sub>th</sub> = 2·A·L·N/60 (single-এর দ্বিগুণ)</td></tr>
+          <tr><td class="hl">Multi-cylinder</td><td>Q<sub>th</sub> = (cylinder সংখ্যা)·A·L·N/60</td></tr>
+          <tr><td class="hl">Slip</td><td>Slip = Q<sub>th</sub> − Q<sub>a</sub></td></tr>
+          <tr><td class="hl">% Slip</td><td>(1 − C<sub>d</sub>) × 100</td></tr>
+          <tr><td class="hl">C<sub>d</sub></td><td>Q<sub>a</sub>/Q<sub>th</sub>, সাধারণত 0.95–0.98</td></tr>
+          <tr><td class="hl">Negative slip</td><td>লম্বা suction + ছোট delivery + বেশি speed → Q<sub>a</sub> > Q<sub>th</sub></td></tr>
+          <tr><td class="hl">Total head</td><td>H<sub>st</sub> = h<sub>s</sub> + h<sub>d</sub></td></tr>
+          <tr><td class="hl">Theoretical power</td><td>P<sub>th</sub> = ρQ<sub>th</sub>gH<sub>st</sub></td></tr>
+          <tr><td class="hl">Actual power</td><td>P<sub>th</sub> / η</td></tr>
+          <tr><td class="hl">Crank angle</td><td>360° ÷ cylinder সংখ্যা</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz-head">✎ শেষ যাচাই</p>
+      <p class="q">Double-acting pump-এর same A, L, N হলে (Problem 1-এর মতো), Q<sub>th</sub> কত হবে?</p>
+      <details class="quiz-reveal"><summary>Answer দেখাও</summary>
+        <div class="ans">Q<sub>th</sub> = 2 × 0.019 = 0.038 m³/s — single-acting-এর ঠিক দ্বিগুণ।</div>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p class="f-title">Reciprocating Pump — হাতে-লেখা নোট</p>
+  <p>সব topic cover করা আছে, দুইটা math problem-ই সম্পূর্ণ সমাধান করা — সহজ বাংলা-English মিশিয়ে, ঠিক একজন student নিজের জন্য যেভাবে নোট বানায়।</p>
+  <p class="f-mono">RECIPROCATING PUMP · FOR ZIHAD · HSTU CSE, 2017 SYLLABUS</p>
+</footer>
+
+<script>
+(function(){
+  var fill = document.getElementById('gaugeFill'); var label = document.getElementById('gauge-label');
+  var circumference = 2 * Math.PI * 27;
+  function onScroll(){
+    var scrollTop = window.scrollY || document.documentElement.scrollTop;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+    fill.style.strokeDashoffset = circumference - (pct/100) * circumference;
+    label.textContent = Math.round(pct) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true }); onScroll();
+  document.getElementById('gauge').addEventListener('click', function(){ window.scrollTo({ top:0, behavior:'smooth' }); });
+})();
+(function(){
+  var sections = document.querySelectorAll('main .section'); var navLinks = document.querySelectorAll('.pipe-node'); var map = {};
+  navLinks.forEach(function(l){ var href = l.getAttribute('href'); if(href) map[href.substring(1)] = l; });
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && map[entry.target.id]){
+        navLinks.forEach(function(l){ l.classList.remove('active'); });
+        map[entry.target.id].classList.add('active');
+        map[entry.target.id].scrollIntoView({ block:'nearest', inline:'center', behavior:'smooth' });
+      }
+    });
+  }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
+  sections.forEach(function(s){ observer.observe(s); });
+})();
+(function(){
+  var reveals = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.06 });
+  reveals.forEach(function(r){ io.observe(r); });
+})();
+</script>
+</body>
+</html>
